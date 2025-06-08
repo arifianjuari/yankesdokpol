@@ -1,0 +1,11 @@
+# Redirect index.php to form_peserta.php
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteRule ^$ form_peserta.php [L]
+    RewriteRule ^index\.php$ form_peserta.php [L]
+</IfModule>
+
+# Alternative method if mod_rewrite is not available
+<IfModule !mod_rewrite.c>
+    DirectoryIndex form_peserta.php
+</IfModule>

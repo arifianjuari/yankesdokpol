@@ -1,0 +1,300 @@
+/**
+ * YankesDokpol Custom Styles
+ *
+ * This file contains custom styles for the YankesDokpol application.
+ *
+ * @package YankesDokpol
+ * @version 1.0
+ */
+
+/* Dokpol Polri Color Scheme */
+:root {
+    --primary-color: #2e7d32; /* Green - Primary color */
+    --secondary-color: #212121; /* Black - Secondary color */
+    --accent-color-1: #ff9800; /* Yellow-Orange - Accent color */
+    --accent-color-2: #795548; /* Brown - Accent color */
+    --light-color: #f5f5f5;
+    --dark-color: #212121;
+    --text-light: #ffffff;
+    --text-dark: #212121;
+
+    /* Font variables */
+    --heading-font: 'Montserrat', sans-serif;
+    --body-font: 'Open Sans', sans-serif;
+}
+
+/* General Styles */
+body {
+    background-color: var(--light-color);
+    font-family: var(--body-font);
+    font-weight: 500; /* Roboto Medium */
+}
+
+.container {
+    max-width: 1200px;
+}
+
+/* Header Styles */
+h1, h2, h3, h4, h5, h6 {
+    font-family: var(--heading-font);
+    font-weight: 700; /* Oswald Bold */
+}
+
+header h1 {
+    color: var(--primary-color);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* Card Styles */
+.card {
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.card-header {
+    font-family: var(--heading-font);
+    font-weight: 700;
+    padding: 12px 20px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    background-color: var(--accent-color-2) !important; /* Dark brown color */
+    color: white !important; /* Ensure text is white for readability */
+}
+
+.card-body {
+    padding: 20px;
+}
+
+/* Form Styles */
+.form-label {
+    font-family: var(--body-font);
+    font-weight: 500;
+}
+
+.form-control:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.25rem rgba(46, 125, 50, 0.25);
+}
+
+/* Button Styles */
+.btn {
+    border-radius: 5px;
+    padding: 8px 16px;
+    font-family: var(--body-font);
+    font-weight: 500;
+    letter-spacing: 0.5px;
+}
+
+.btn-primary {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.btn-primary:hover {
+    background-color: #1b5e20;
+    border-color: #1b5e20;
+}
+
+.btn-secondary {
+    background-color: var(--secondary-color);
+    border-color: var(--secondary-color);
+}
+
+.btn-secondary:hover {
+    background-color: #000000;
+    border-color: #000000;
+}
+
+.btn-warning {
+    background-color: var(--accent-color-1);
+    border-color: var(--accent-color-1);
+}
+
+.btn-warning:hover {
+    background-color: #f57c00;
+    border-color: #f57c00;
+}
+
+.btn-success {
+    background-color: #43a047;
+    border-color: #43a047;
+}
+
+.btn-success:hover {
+    background-color: #388e3c;
+    border-color: #388e3c;
+}
+
+.btn-outline-primary {
+    color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.btn-outline-primary:hover {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+    color: var(--text-light);
+}
+
+/* Image Preview */
+#ktpPreview {
+    padding: 10px;
+    border: 1px solid #dee2e6;
+    border-radius: 5px;
+    background-color: #fff;
+}
+
+#ktpImage {
+    max-height: 200px;
+    object-fit: contain;
+}
+
+/* Dashboard Styles */
+.display-4 {
+    font-family: var(--heading-font);
+    font-weight: 700;
+    font-size: 2.5rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* Card Color Overrides */
+.bg-primary {
+    background-color: var(--accent-color-2) !important; /* Changed from primary-color (green) to accent-color-2 (brown) */
+}
+
+.bg-success {
+    background-color: var(--accent-color-2) !important;
+}
+
+.bg-info {
+    background-color: var(--secondary-color) !important;
+}
+
+.bg-warning {
+    background-color: var(--accent-color-1) !important;
+}
+
+/* Footer Styles */
+footer {
+    color: var(--secondary-color);
+    font-size: 0.9rem;
+    font-family: var(--body-font);
+    font-weight: 500;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .card-header h5 {
+        font-size: 1rem;
+    }
+
+    .display-4 {
+        font-size: 2rem;
+    }
+
+    h1 {
+        font-size: 1.8rem;
+    }
+
+}
+
+
+
+/* Admin Navigation Styling */
+@media (min-width: 992px) { /* lg breakpoint */
+    .admin-nav-spacer {
+        /* Untuk memberi ruang bagi navbar mobile yang fixed-top */
+        display: none;
+    }
+    #adminOffcanvas {
+        position: fixed;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        z-index: 1000; /* Di bawah navbar mobile jika ada, tapi di atas konten */
+        display: flex !important; /* Paksa tampil di desktop */
+        flex-direction: column;
+        visibility: visible !important; /* Paksa tampil */
+        transform: none !important; /* Reset transform dari offcanvas */
+        border-right: 1px solid rgba(0,0,0,.1);
+    }
+    .main-content-admin {
+        margin-left: 280px; /* Lebar sidebar */
+        padding-top: 1rem; /* Sesuaikan jika ada navbar atas lain */
+    }
+    .navbar.d-lg-none.fixed-top { /* Sembunyikan navbar mobile di desktop */
+        display: none !important;
+    }
+}
+
+@media (max-width: 991.98px) { /* Di bawah lg breakpoint */
+    .admin-nav-spacer {
+        height: 56px; /* Sesuaikan dengan tinggi navbar mobile Anda */
+        display: block;
+    }
+    #adminOffcanvas {
+        z-index: 1045; /* Di atas konten, di bawah modal backdrop jika ada */
+    }
+    .main-content-admin {
+        margin-left: 0;
+        padding-top: 1rem; /* Sesuaikan dengan kebutuhan */
+    }
+    .navbar.d-lg-none.fixed-top {
+        display: flex !important;
+    }
+}
+
+.offcanvas-body .nav-pills .nav-link.active,
+.offcanvas-body .nav-pills .show>.nav-link {
+    color: #fff;
+    background-color: var(--primary-color); /* Menggunakan variabel warna primary */
+    font-weight: normal; /* Ensure consistent font weight */
+    font-family: var(--body-font); /* Ensure consistent font family */
+    font-size: 1rem; /* Ensure consistent font size */
+}
+
+/* Ensure icons remain visible in active menu items */
+.offcanvas-body .nav-pills .nav-link.active i,
+.offcanvas-body .nav-pills .show>.nav-link i {
+    display: inline-block;
+    min-width: 20px;
+    text-align: center;
+    margin-right: 10px;
+}
+
+.offcanvas-body .nav-pills .nav-link {
+    font-weight: normal;
+    font-family: var(--body-font);
+    font-size: 1rem;
+}
+
+.offcanvas-body .nav-link.text-white:hover,
+.offcanvas-body .nav-link.text-white:focus {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.offcanvas-body .dropdown-menu {
+    background-color: #343a40; /* bg-dark */
+}
+
+.offcanvas-body .dropdown-item:hover,
+.offcanvas-body .dropdown-item:focus {
+    background-color: rgba(255, 255, 255, 0.15);
+}
+
+/* Print Styles */
+@media print {
+    .no-print {
+        display: none;
+    }
+    
+    .container {
+        width: 100%;
+        max-width: 100%;
+    }
+}

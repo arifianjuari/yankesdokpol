@@ -1,0 +1,22 @@
+{
+    "name": "yankesdokpol/app",
+    "description": "Sistem Pencatatan Data Peserta Kegiatan Bakti Kesehatan",
+    "type": "project",
+    "require": {
+        "php": ">=7.4",
+        "phpoffice/phpspreadsheet": "^1.28",
+        "thiagoalessio/tesseract_ocr": "^2.12",
+        "intervention/image": "^2.7"
+    },
+    "autoload": {
+        "psr-4": {
+            "YankesDokpol\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "YankesDokpol Team"
+        }
+    ],
+    "minimum-stability": "stable"
+}

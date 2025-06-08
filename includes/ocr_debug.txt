@@ -1,0 +1,109 @@
+=== PROSES OCR KTP BARU: 2025-06-09 02:42:55 ===
+
+IMAGE PATH: /private/var/folders/9y/j8n3ttq94w34jf4q8lw2pxvr0000gn/T/php4a54niakhqf15mJ50pj
+
+
+OCR API CALL START: 2025-06-09 02:42:55
+FILE INFO: Size=151951bytes, Type=image/jpeg
+Ukuran file setelah kompresi: 53270 bytes
+Gambar dikompres. Size baru=53270bytes
+Base64 encoding berhasil, panjang: 71028 karakter
+Data base64 siap dikirim
+Mengirim request ke OCR.space...
+Memory Usage: 2097152 bytes, Memory Limit: 512M
+HTTP Status: 200
+CURL ERROR: 
+RAW RESPONSE (first 500 chars):
+{"ParsedResults":[{"TextOverlay":{"Lines":[],"HasOverlay":false,"Message":"Text overlay is not provided as it is not requested"},"TextOrientation":"0","FileParseExitCode":1,"ParsedText":"NIK\nPROVINSI JAWA TIMUR\nKOTA BLITAR\n: 3572016610860008\nNama\n: EVELYN CHRISTINA\nTempat/Tgl Lahir\nJenis Kelamin\n: BUTAR, 26-10-1986\n: PEREMPUAN\nAlamat\n: JL CEMARA 07\nRT/RW\n: 003 / 002\nKel/Desa\n: KEPANJENKIDUL\nKecamatan\n: KEPANJENKIDUL\nAgama\n: KATHOLIK\nStatus Perkawinan : BELUM KAWIN\nPekerjaan\
+JSON Parse success. Structure: Array
+(
+    [0] => ParsedResults
+    [1] => OCRExitCode
+    [2] => IsErroredOnProcessing
+    [3] => ProcessingTimeInMilliseconds
+    [4] => SearchablePDFURL
+)
+
+PARSED TEXT:
+NIK
+PROVINSI JAWA TIMUR
+KOTA BLITAR
+: 3572016610860008
+Nama
+: EVELYN CHRISTINA
+Tempat/Tgl Lahir
+Jenis Kelamin
+: BUTAR, 26-10-1986
+: PEREMPUAN
+Alamat
+: JL CEMARA 07
+RT/RW
+: 003 / 002
+Kel/Desa
+: KEPANJENKIDUL
+Kecamatan
+: KEPANJENKIDUL
+Agama
+: KATHOLIK
+Status Perkawinan : BELUM KAWIN
+Pekerjaan
+: DOKTER
+Kewarganegaraan: WNI
+Berlaku Hingga
+: 26-10-2017
+Gol. Darah : O
+KOTA BLITAR
+02-04-2012
+=== OCR TEXT MENTAH ===
+NIK
+PROVINSI JAWA TIMUR
+KOTA BLITAR
+: 3572016610860008
+Nama
+: EVELYN CHRISTINA
+Tempat/Tgl Lahir
+Jenis Kelamin
+: BUTAR, 26-10-1986
+: PEREMPUAN
+Alamat
+: JL CEMARA 07
+RT/RW
+: 003 / 002
+Kel/Desa
+: KEPANJENKIDUL
+Kecamatan
+: KEPANJENKIDUL
+Agama
+: KATHOLIK
+Status Perkawinan : BELUM KAWIN
+Pekerjaan
+: DOKTER
+Kewarganegaraan: WNI
+Berlaku Hingga
+: 26-10-2017
+Gol. Darah : O
+KOTA BLITAR
+02-04-2012
+
+Hasil ekstrak NIK: 3572016610860008
+Hasil ekstrak Nama: EVELYN CHRISTINA
+Hasil ekstrak Alamat: JL CEMARA 07
+Mencoba ekstrak tanggal lahir dari OCR text...
+Format KTP ditemukan: 1986-10-26
+Hasil ekstrak Tanggal Lahir: 1986-10-26
+
+OCR Results: {"nik":"3572016610860008","nama":"EVELYN CHRISTINA","alamat":"JL CEMARA 07","tanggal_lahir":"1986-10-26","errors":[],"success":true}
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
