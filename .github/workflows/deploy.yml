@@ -5,16 +5,12 @@ on:
     branches: [ main ]
 
 env:
-  FTP_SERVER: biddokkesjatim.org
-  FTP_PORT: 21
-  FTP_USERNAME: u609399718
-  FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
+  SFTP_SERVER: 46.202.186.237
+  SFTP_PORT: 65002
+  SFTP_USERNAME: u609399718
+  SFTP_PASSWORD: ${{ secrets.SFTP_PASSWORD }}
   LOCAL_DIR: .
   REMOTE_DIR: /domains/biddokkesjatim.org/public_html/yankesdokpol
-
-defaults:
-  run:
-    working-directory: ${{ github.workspace }}
 
 jobs:
   deploy:
@@ -29,16 +25,11 @@ jobs:
         sudo apt-get update
         sudo apt-get install -y lftp
         
-    - name: List files
-      run: ls -la
-      
     - name: Create deployment script
       run: |
         cat > deploy.lftp << 'EOL'
-        set ftp:ssl-allow no
-        set ssl:verify-certificate no
         set sftp:auto-confirm yes
-        open -u $FTP_USERNAME,$FTP_PASSWORD -p $FTP_PORT $FTP_SERVER
+        open sftp://$SFTP_USERNAME:$SFTP_PASSWORD@$SFTP_SERVER:$SFTP_PORT
         
         # Create directories if they don't exist
         mkdir -p $REMOTE_DIR
@@ -68,9 +59,9 @@ jobs:
       run: |
         lftp -f deploy.lftp
       env:
-        FTP_SERVER: ${{ env.FTP_SERVER }}
-        FTP_PORT: ${{ env.FTP_PORT }}
-        FTP_USERNAME: ${{ env.FTP_USERNAME }}
-        FTP_PASSWORD: ${{ env.FTP_PASSWORD }}
+        SFTP_SERVER: ${{ env.SFTP_SERVER }}
+        SFTP_PORT: ${{ env.SFTP_PORT }}
+        SFTP_USERNAME: ${{ env.SFTP_USERNAME }}
+        SFTP_PASSWORD: ${{ env.SFTP_PASSWORD }}
         LOCAL_DIR: ${{ env.LOCAL_DIR }}
         REMOTE_DIR: ${{ env.REMOTE_DIR }}
