@@ -4,6 +4,12 @@ on:
   push:
     branches: [ main ]
 
+
+env:
+  HOST: biddokkesjatim.org
+  USERNAME: u609399718
+  TARGET_DIR: /home/u609399718/domains/biddokkesjatim.org/public_html/yankesdokpol
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -22,18 +28,41 @@ jobs:
     - name: Add known hosts
       run: |
         mkdir -p ~/.ssh
-        ssh-keyscan -H biddokkesjatim.org >> ~/.ssh/known_hosts
+        chmod 700 ~/.ssh
+        ssh-keyscan -H ${{ env.HOST }} >> ~/.ssh/known_hosts
+        chmod 644 ~/.ssh/known_hosts
     
-    - name: Deploy to server
+    - name: Test SSH connection
       run: |
-        # Buat direktori sementara
-        mkdir -p ~/deploy_temp
-        
-        # Salin file ke direktori sementara
-        rsync -avz --delete --exclude='.git' --exclude='.github' --exclude='.gitignore' \
-              ./ u609399718@biddokkesjatim.org:/home/u609399718/domains/biddokkesjatim.org/public_html/yankesdokpol/
-        
-        # Set permission yang sesuai
-        ssh u609399718@biddokkesjatim.org 'chmod -R 755 /home/u609399718/domains/biddokkesjatim.org/public_html/yankesdokpol/'
-        ssh u609399718@biddokkesjatim.org 'chmod -R 777 /home/u609399718/domains/biddokkesjatim.org/public_html/yankesdokpol/uploads/'
-        ssh u609399718@biddokkesjatim.org 'chmod -R 777 /home/u609399718/domains/biddokkesjatim.org/public_html/yankesdokpol/dokumentasi/'
+        ssh -v -o StrictHostKeyChecking=no ${{ env.USERNAME }}@${{ env.HOST }} 'echo "SSH Connection Successful"'
+    
+    - name: Create target directory if not exists
+      run: |
+        ssh ${{ env.USERNAME }}@${{ env.HOST }} "
+          mkdir -p ${{ env.TARGET_DIR }}
+          chmod -R 755 ${{ env.TARGET_DIR }}
+          mkdir -p ${{ env.TARGET_DIR }}/uploads
+          mkdir -p ${{ env.TARGET_DIR }}/dokumentasi
+          chmod -R 777 ${{ env.TARGET_DIR }}/uploads
+          chmod -R 777 ${{ env.TARGET_DIR }}/dokumentasi
+        "
+    
+    - name: Deploy using rsync
+      run: |
+        rsync -avz --delete \
+          --exclude='.git' \
+          --exclude='.github' \
+          --exclude='.gitignore' \
+          --exclude='.env' \
+          --exclude='node_modules' \
+          ./ ${{ env.USERNAME }}@${{ env.HOST }}:${{ env.TARGET_DIR }}/
+    
+    - name: Set file permissions
+      run: |
+        ssh ${{ env.USERNAME }}@${{ env.HOST }} "
+          find ${{ env.TARGET_DIR }} -type d -exec chmod 755 {} \;
+          find ${{ env.TARGET_DIR }} -type f -exec chmod 644 {} \;
+          chmod -R 777 ${{ env.TARGET_DIR }}/uploads
+          chmod -R 777 ${{ env.TARGET_DIR }}/dokumentasi
+          chmod 755 ${{ env.TARGET_DIR }}
+        "
