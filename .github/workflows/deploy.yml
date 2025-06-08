@@ -4,12 +4,17 @@ on:
   push:
     branches: [ main ]
 
-
 env:
-  HOST: biddokkesjatim.org
-  PORT: 65002
-  USERNAME: u609399718
-  TARGET_DIR: /domains/biddokkesjatim.org/public_html/yankesdokpol
+  FTP_SERVER: biddokkesjatim.org
+  FTP_PORT: 21
+  FTP_USERNAME: u609399718
+  FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
+  LOCAL_DIR: .
+  REMOTE_DIR: /domains/biddokkesjatim.org/public_html/yankesdokpol
+
+defaults:
+  run:
+    working-directory: ${{ github.workspace }}
 
 jobs:
   deploy:
@@ -18,48 +23,54 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v3
-      with:
-        fetch-depth: 0
-    
-    - name: Setup SSH
-      uses: webfactory/ssh-agent@v0.7.0
-      with:
-        ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
-    
-    - name: Add known hosts
+      
+    - name: Install lftp
       run: |
-        mkdir -p ~/.ssh
-        chmod 700 ~/.ssh
-        ssh-keyscan -p ${{ env.PORT }} -H ${{ env.HOST }} >> ~/.ssh/known_hosts
-        chmod 644 ~/.ssh/known_hosts
-    
-    - name: Test SFTP connection
+        sudo apt-get update
+        sudo apt-get install -y lftp
+        
+    - name: List files
+      run: ls -la
+      
+    - name: Create deployment script
       run: |
-        echo "put -r . ${{ env.TARGET_DIR }}" | sftp -P ${{ env.PORT }} -b - ${{ env.USERNAME }}@${{ env.HOST }}:/domains/biddokkesjatim.org/public_html/
-    
-    - name: Deploy using SFTP
-      uses: SamKirkland/FTP-Deploy-Action@v4.3.4
-      with:
-        server: ${{ env.HOST }}
-        server-dir: ${{ env.TARGET_DIR }}
-        username: ${{ env.USERNAME }}
-        password: ${{ secrets.SFTP_PASSWORD }}
-        port: ${{ env.PORT }}
-        exclude: |
-          **/.git/**
-          **/.github/**
-          **/.gitignore
-          **/.env
-          **/node_modules/**
-          **/README.md
-          **/LICENSE
-    
-    - name: Set file permissions
+        cat > deploy.lftp << 'EOL'
+        set ftp:ssl-allow no
+        set ssl:verify-certificate no
+        set sftp:auto-confirm yes
+        open -u $FTP_USERNAME,$FTP_PASSWORD -p $FTP_PORT $FTP_SERVER
+        
+        # Create directories if they don't exist
+        mkdir -p $REMOTE_DIR
+        cd $REMOTE_DIR
+        
+        # Mirror local to remote
+        mirror --reverse --delete --verbose \
+          --exclude .git/ \
+          --exclude .github/ \
+          --exclude .gitignore \
+          --exclude .env \
+          --exclude node_modules/ \
+          $LOCAL_DIR/ .
+        
+        # Set permissions
+        chmod -R 755 .
+        chmod -R 777 uploads/
+        chmod -R 777 dokumentasi/
+        
+        bye
+        EOL
+        
+        # Make script executable
+        chmod +x deploy.lftp
+        
+    - name: Run deployment
       run: |
-        ssh -p ${{ env.PORT }} ${{ env.USERNAME }}@${{ env.HOST }} "
-          find ${{ env.TARGET_DIR }} -type d -exec chmod 755 {} \;
-          find ${{ env.TARGET_DIR }} -type f -exec chmod 644 {} \;
-          chmod -R 777 ${{ env.TARGET_DIR }}/uploads
-          chmod -R 777 ${{ env.TARGET_DIR }}/dokumentasi
-          chmod 755 ${{ env.TARGET_DIR }}
-        "
+        lftp -f deploy.lftp
+      env:
+        FTP_SERVER: ${{ env.FTP_SERVER }}
+        FTP_PORT: ${{ env.FTP_PORT }}
+        FTP_USERNAME: ${{ env.FTP_USERNAME }}
+        FTP_PASSWORD: ${{ env.FTP_PASSWORD }}
+        LOCAL_DIR: ${{ env.LOCAL_DIR }}
+        REMOTE_DIR: ${{ env.REMOTE_DIR }}
