@@ -2,6 +2,10 @@
 
 YankesDokpol adalah aplikasi web untuk mengelola kegiatan bakti kesehatan di lingkungan Polri. Aplikasi ini memungkinkan pencatatan data peserta secara digital dengan fitur OCR untuk KTP, serta menyediakan dashboard untuk visualisasi data.
 
+## Deployment Otomatis
+
+Aplikasi ini menggunakan GitHub Actions untuk deployment otomatis ke server produksi. Setiap kali ada perubahan yang di-push ke branch `main`, GitHub Actions akan secara otomatis mendeploy perubahan tersebut ke server.
+
 ## Fitur Utama
 
 - Upload foto KTP dengan OCR otomatis
