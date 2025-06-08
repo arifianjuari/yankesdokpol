@@ -7,8 +7,9 @@ on:
 
 env:
   HOST: biddokkesjatim.org
+  PORT: 65002
   USERNAME: u609399718
-  TARGET_DIR: /home/u609399718/domains/biddokkesjatim.org/public_html/yankesdokpol
+  TARGET_DIR: /domains/biddokkesjatim.org/public_html/yankesdokpol
 
 jobs:
   deploy:
@@ -29,37 +30,33 @@ jobs:
       run: |
         mkdir -p ~/.ssh
         chmod 700 ~/.ssh
-        ssh-keyscan -H ${{ env.HOST }} >> ~/.ssh/known_hosts
+        ssh-keyscan -p ${{ env.PORT }} -H ${{ env.HOST }} >> ~/.ssh/known_hosts
         chmod 644 ~/.ssh/known_hosts
     
-    - name: Test SSH connection
+    - name: Test SFTP connection
       run: |
-        ssh -v -o StrictHostKeyChecking=no ${{ env.USERNAME }}@${{ env.HOST }} 'echo "SSH Connection Successful"'
+        echo "put -r . ${{ env.TARGET_DIR }}" | sftp -P ${{ env.PORT }} -b - ${{ env.USERNAME }}@${{ env.HOST }}:/domains/biddokkesjatim.org/public_html/
     
-    - name: Create target directory if not exists
-      run: |
-        ssh ${{ env.USERNAME }}@${{ env.HOST }} "
-          mkdir -p ${{ env.TARGET_DIR }}
-          chmod -R 755 ${{ env.TARGET_DIR }}
-          mkdir -p ${{ env.TARGET_DIR }}/uploads
-          mkdir -p ${{ env.TARGET_DIR }}/dokumentasi
-          chmod -R 777 ${{ env.TARGET_DIR }}/uploads
-          chmod -R 777 ${{ env.TARGET_DIR }}/dokumentasi
-        "
-    
-    - name: Deploy using rsync
-      run: |
-        rsync -avz --delete \
-          --exclude='.git' \
-          --exclude='.github' \
-          --exclude='.gitignore' \
-          --exclude='.env' \
-          --exclude='node_modules' \
-          ./ ${{ env.USERNAME }}@${{ env.HOST }}:${{ env.TARGET_DIR }}/
+    - name: Deploy using SFTP
+      uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+      with:
+        server: ${{ env.HOST }}
+        server-dir: ${{ env.TARGET_DIR }}
+        username: ${{ env.USERNAME }}
+        password: ${{ secrets.SFTP_PASSWORD }}
+        port: ${{ env.PORT }}
+        exclude: |
+          **/.git/**
+          **/.github/**
+          **/.gitignore
+          **/.env
+          **/node_modules/**
+          **/README.md
+          **/LICENSE
     
     - name: Set file permissions
       run: |
-        ssh ${{ env.USERNAME }}@${{ env.HOST }} "
+        ssh -p ${{ env.PORT }} ${{ env.USERNAME }}@${{ env.HOST }} "
           find ${{ env.TARGET_DIR }} -type d -exec chmod 755 {} \;
           find ${{ env.TARGET_DIR }} -type f -exec chmod 644 {} \;
           chmod -R 777 ${{ env.TARGET_DIR }}/uploads
