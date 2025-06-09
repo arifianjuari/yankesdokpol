@@ -59,6 +59,7 @@ jobs:
           --exclude node_modules/ \
           --exclude vendor/ \
           --exclude sshkey* \
+          --exclude assets/uploads/ \
           .
         
         # Set permissions
