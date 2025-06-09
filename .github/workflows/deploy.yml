@@ -50,7 +50,7 @@ jobs:
         # Change to target directory
         cd ${{ env.REMOTE_DIR }}
         
-        # Mirror local directory to remote
+        # Mirror project directory to remote
         mirror -v -R --delete --parallel=5 \
           --exclude .git/ \
           --exclude .github/ \
@@ -59,7 +59,7 @@ jobs:
           --exclude node_modules/ \
           --exclude vendor/ \
           --exclude sshkey* \
-          /
+          .
         
         # Set permissions
         !find . -type d -exec chmod 755 {} \;
