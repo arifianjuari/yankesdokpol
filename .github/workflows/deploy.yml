@@ -7,11 +7,11 @@ on:
     # Allow manual trigger
 
 env:
-  SFTP_SERVER: 46.202.186.237
-  SFTP_PORT: 65002
-  SFTP_USER: u609399718
-  SFTP_PASS: ${{ secrets.SFTP_PASSWORD }}
-  REMOTE_DIR: /home/u609399718/domains/biddokkesjatim.org/public_html/yankesdokpol
+  SFTP_SERVER: 31.97.187.135
+  SFTP_PORT: 22
+  SFTP_USER: root
+  SFTP_PASS: ${{ secrets.VPS_PASSWORD }}
+  REMOTE_DIR: /var/www/html/yankesdokpol
 
 jobs:
   deploy:
@@ -43,7 +43,7 @@ jobs:
       run: |
         echo "Testing SFTP connection..."
         # Add verbose output for debugging
-        sshpass -p "${{ secrets.SFTP_PASSWORD }}" sftp -v -o StrictHostKeyChecking=no -o ConnectTimeout=30 -o ConnectionAttempts=3 -P ${{ env.SFTP_PORT }} ${{ env.SFTP_USER }}@${{ env.SFTP_SERVER }} <<EOF || echo "SFTP connection failed but continuing"
+        sshpass -p "${{ secrets.VPS_PASSWORD }}" sftp -v -o StrictHostKeyChecking=no -o ConnectTimeout=30 -o ConnectionAttempts=3 -P ${{ env.SFTP_PORT }} ${{ env.SFTP_USER }}@${{ env.SFTP_SERVER }} <<EOF || echo "SFTP connection failed but continuing"
         pwd
         ls -la
         exit
@@ -71,7 +71,8 @@ jobs:
         cd ${{ env.REMOTE_DIR }}
         
         # Create required directories if they don't exist
-        !mkdir -p uploads dokumentasi
+        !mkdir -p ${{ env.REMOTE_DIR }}
+        !mkdir -p ${{ env.REMOTE_DIR }}/uploads ${{ env.REMOTE_DIR }}/dokumentasi
         
         # Mirror project directory to remote (only changed files)
         # Use smaller chunks with fewer parallel transfers
@@ -89,13 +90,16 @@ jobs:
           .
         
         # Set directory permissions - using simpler commands to avoid potential issues
-        !find . -type d -not -path "./uploads*" -not -path "./dokumentasi*" -exec chmod 755 {} \; || echo "Setting directory permissions failed"
+        !find ${{ env.REMOTE_DIR }} -type d -not -path "${{ env.REMOTE_DIR }}/uploads*" -not -path "${{ env.REMOTE_DIR }}/dokumentasi*" -exec chmod 755 {} \; || echo "Setting directory permissions failed"
         
         # Set file permissions
-        !find . -type f -not -path "./uploads*" -not -path "./dokumentasi*" -exec chmod 644 {} \; || echo "Setting file permissions failed"
+        !find ${{ env.REMOTE_DIR }} -type f -not -path "${{ env.REMOTE_DIR }}/uploads*" -not -path "${{ env.REMOTE_DIR }}/dokumentasi*" -exec chmod 644 {} \; || echo "Setting file permissions failed"
         
         # Special permissions for upload directories
-        !chmod -R 777 uploads/ dokumentasi/ 2>/dev/null || echo "Setting upload directory permissions failed"
+        !chmod -R 777 ${{ env.REMOTE_DIR }}/uploads/ ${{ env.REMOTE_DIR }}/dokumentasi/ 2>/dev/null || echo "Setting upload directory permissions failed"
+        
+        # Set proper ownership for web server
+        !chown -R www-data:www-data ${{ env.REMOTE_DIR }} || echo "Setting ownership failed"
         
         # List files after upload
         ls -la
