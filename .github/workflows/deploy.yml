@@ -13,35 +13,32 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v3
 
-    - name: Setup SSH key
+    - name: Install sshpass
+      run: sudo apt-get update && sudo apt-get install -y sshpass rsync
+
+    - name: Add known hosts
       run: |
         mkdir -p ~/.ssh
-        echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_ed25519
-        chmod 600 ~/.ssh/id_ed25519
-        eval "$(ssh-agent -s)"
-        ssh-add ~/.ssh/id_ed25519
+        chmod 700 ~/.ssh
         ssh-keyscan -H ${{ secrets.REMOTE_HOST }} >> ~/.ssh/known_hosts
-        chmod 644 ~/.ssh/known_hosts
-
-    - name: Test SSH connection
-      run: |
-        ssh -v -o BatchMode=yes -o StrictHostKeyChecking=no ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }} "echo 'SSH connection successful'"
-
-    - name: Install rsync
-      run: sudo apt-get update && sudo apt-get install -y rsync
+        chmod 600 ~/.ssh/known_hosts
 
     - name: Deploy to VPS
       env:
+        SSHPASS: ${{ secrets.VPS_PASSWORD }}
         REMOTE_DIR: ${{ secrets.REMOTE_DIR || '/var/www/html/yankesdokpol' }}
         REMOTE_USER: ${{ secrets.REMOTE_USER || 'root' }}
         REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
       run: |
+        # Test connection
+        sshpass -e ssh -o StrictHostKeyChecking=no $REMOTE_USER@$REMOTE_HOST "echo 'Connection successful'"
+        
         # Create necessary directories
-        ssh -o BatchMode=yes -o StrictHostKeyChecking=no $REMOTE_USER@$REMOTE_HOST \
+        sshpass -e ssh -o StrictHostKeyChecking=no $REMOTE_USER@$REMOTE_HOST \
           "mkdir -p $REMOTE_DIR $REMOTE_DIR/uploads $REMOTE_DIR/dokumentasi"
         
         # Deploy using rsync
-        rsync -avz --delete \
+        sshpass -e rsync -avz --delete \
           --exclude='.git' \
           --exclude='.github' \
           --exclude='.gitignore' \
@@ -52,12 +49,12 @@ jobs:
           --exclude='assets/uploads' \
           --exclude='uploads' \
           --exclude='dokumentasi' \
-          -e "ssh -o BatchMode=yes -o StrictHostKeyChecking=no" \
+          -e "sshpass -e ssh -o StrictHostKeyChecking=no" \
           ./ \
           $REMOTE_USER@$REMOTE_HOST:$REMOTE_DIR/
 
         # Set permissions
-        ssh -o BatchMode=yes -o StrictHostKeyChecking=no $REMOTE_USER@$REMOTE_HOST "
+        sshpass -e ssh -o StrictHostKeyChecking=no $REMOTE_USER@$REMOTE_HOST "
           chown -R www-data:www-data $REMOTE_DIR
           find $REMOTE_DIR -type d -not -path \"$REMOTE_DIR/uploads*\" -not -path \"$REMOTE_DIR/dokumentasi*\" -exec chmod 755 {} \;
           find $REMOTE_DIR -type f -not -path \"$REMOTE_DIR/uploads*\" -not -path \"$REMOTE_DIR/dokumentasi*\" -exec chmod 644 {} \;
