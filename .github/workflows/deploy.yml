@@ -65,14 +65,14 @@ jobs:
         set net:reconnect-interval-multiplier 1.5
         set dns:fatal-timeout 60
         
-        open -v sftp://${{ env.SFTP_USER }}:${{ env.SFTP_PASS }}@${{ env.SFTP_SERVER }}:${{ env.SFTP_PORT }}
+        # Connect to SFTP
+        open sftp://${{ env.SFTP_USER }}:${{ env.SFTP_PASS }}@${{ env.SFTP_SERVER }}:${{ env.SFTP_PORT }}
+        
+        # Create target directory if not exists
+        !ssh ${{ env.SFTP_USER }}@${{ env.SFTP_SERVER }} -p ${{ env.SFTP_PORT }} "mkdir -p ${{ env.REMOTE_DIR }} ${{ env.REMOTE_DIR }}/uploads ${{ env.REMOTE_DIR }}/dokumentasi && chmod -R 755 ${{ env.REMOTE_DIR }}"
         
         # Change to target directory
         cd ${{ env.REMOTE_DIR }}
-        
-        # Create required directories if they don't exist
-        !mkdir -p ${{ env.REMOTE_DIR }}
-        !mkdir -p ${{ env.REMOTE_DIR }}/uploads ${{ env.REMOTE_DIR }}/dokumentasi
         
         # Mirror project directory to remote (only changed files)
         # Use smaller chunks with fewer parallel transfers
@@ -89,17 +89,13 @@ jobs:
           --exclude dokumentasi/ \
           .
         
-        # Set directory permissions - using simpler commands to avoid potential issues
-        !find ${{ env.REMOTE_DIR }} -type d -not -path "${{ env.REMOTE_DIR }}/uploads*" -not -path "${{ env.REMOTE_DIR }}/dokumentasi*" -exec chmod 755 {} \; || echo "Setting directory permissions failed"
-        
-        # Set file permissions
-        !find ${{ env.REMOTE_DIR }} -type f -not -path "${{ env.REMOTE_DIR }}/uploads*" -not -path "${{ env.REMOTE_DIR }}/dokumentasi*" -exec chmod 644 {} \; || echo "Setting file permissions failed"
-        
-        # Special permissions for upload directories
-        !chmod -R 777 ${{ env.REMOTE_DIR }}/uploads/ ${{ env.REMOTE_DIR }}/dokumentasi/ 2>/dev/null || echo "Setting upload directory permissions failed"
-        
-        # Set proper ownership for web server
-        !chown -R www-data:www-data ${{ env.REMOTE_DIR }} || echo "Setting ownership failed"
+        # Set permissions using SSH instead of SFTP commands
+        !ssh ${{ env.SFTP_USER }}@${{ env.SFTP_SERVER }} -p ${{ env.SFTP_PORT }} "
+          find ${{ env.REMOTE_DIR }} -type d -not -path \"${{ env.REMOTE_DIR }}/uploads*\" -not -path \"${{ env.REMOTE_DIR }}/dokumentasi*\" -exec chmod 755 {} \; || echo 'Failed to set directory permissions'
+          find ${{ env.REMOTE_DIR }} -type f -not -path \"${{ env.REMOTE_DIR }}/uploads*\" -not -path \"${{ env.REMOTE_DIR }}/dokumentasi*\" -exec chmod 644 {} \; || echo 'Failed to set file permissions'
+          chmod -R 777 ${{ env.REMOTE_DIR }}/uploads ${{ env.REMOTE_DIR }}/dokumentasi 2>/dev/null || echo 'Failed to set upload directory permissions'
+          chown -R www-data:www-data ${{ env.REMOTE_DIR }} || echo 'Failed to set ownership'
+        "
         
         # List files after upload
         ls -la
