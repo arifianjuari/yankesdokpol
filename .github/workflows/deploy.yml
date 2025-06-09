@@ -4,13 +4,6 @@ on:
   push:
     branches: [ main ]
 
-env:
-  SFTP_SERVER: 46.202.186.237
-  SFTP_PORT: 65002
-  SFTP_USERNAME: u609399718
-  SFTP_PASSWORD: ${{ secrets.SFTP_PASSWORD }}
-  LOCAL_DIR: .
-  REMOTE_DIR: /domains/biddokkesjatim.org/public_html/yankesdokpol
 
 jobs:
   deploy:
@@ -29,25 +22,43 @@ jobs:
       run: |
         cat > deploy.lftp << 'EOL'
         set sftp:auto-confirm yes
-        open sftp://$SFTP_USERNAME:$SFTP_PASSWORD@$SFTP_SERVER:$SFTP_PORT
+        open sftp://${{ secrets.SFTP_USERNAME }}:${{ secrets.SFTP_PASSWORD }}@46.202.186.237:65002
         
-        # Create directories if they don't exist
-        mkdir -p $REMOTE_DIR
-        cd $REMOTE_DIR
+        # Create main directory
+        mkdir -p /domains/biddokkesjatim.org/public_html/yankesdokpol
+        cd /domains/biddokkesjatim.org/public_html/yankesdokpol
         
-        # Mirror local to remote
-        mirror --reverse --delete --verbose \
-          --exclude .git/ \
-          --exclude .github/ \
-          --exclude .gitignore \
-          --exclude .env \
-          --exclude node_modules/ \
-          $LOCAL_DIR/ .
+        # Create necessary directories
+        mkdir -p uploads
+        mkdir -p dokumentasi
+        mkdir -p assets
+        mkdir -p api
+        mkdir -p config
+        mkdir -p content
+        mkdir -p includes
+        
+        # Upload all files
+        lcd $GITHUB_WORKSPACE
+        
+        # Upload root files
+        mput -E *.php
+        mput -E *.html
+        mput -E *.json
+        mput -E *.js
+        mput -E .htaccess
+        mput -E README.md
+        
+        # Upload directories
+        mirror -R -v --parallel=5 --exclude .git/ --exclude .github/ --exclude .gitignore --exclude .env --exclude node_modules/ assets/ ./assets/
+        mirror -R -v --parallel=5 --exclude .git/ --exclude .github/ --exclude .gitignore --exclude .env --exclude node_modules/ api/ ./api/
+        mirror -R -v --parallel=5 --exclude .git/ --exclude .github/ --exclude .gitignore --exclude .env --exclude node_modules/ config/ ./config/
+        mirror -R -v --parallel=5 --exclude .git/ --exclude .github/ --exclude .gitignore --exclude .env --exclude node_modules/ content/ ./content/
+        mirror -R -v --parallel=5 --exclude .git/ --exclude .github/ --exclude .gitignore --exclude .env --exclude node_modules/ includes/ ./includes/
         
         # Set permissions
         chmod -R 755 .
-        chmod -R 777 uploads/
-        chmod -R 777 dokumentasi/
+        chmod -R 777 uploads
+        chmod -R 777 dokumentasi
         
         bye
         EOL
@@ -58,10 +69,3 @@ jobs:
     - name: Run deployment
       run: |
         lftp -f deploy.lftp
-      env:
-        SFTP_SERVER: ${{ env.SFTP_SERVER }}
-        SFTP_PORT: ${{ env.SFTP_PORT }}
-        SFTP_USERNAME: ${{ env.SFTP_USERNAME }}
-        SFTP_PASSWORD: ${{ env.SFTP_PASSWORD }}
-        LOCAL_DIR: ${{ env.LOCAL_DIR }}
-        REMOTE_DIR: ${{ env.REMOTE_DIR }}
