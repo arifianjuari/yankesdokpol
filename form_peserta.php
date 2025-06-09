@@ -887,7 +887,7 @@ $satkerList = fetchRows("SELECT id, nama_satker FROM satker WHERE is_active = 1 
                                     <div class="form-text">Upload foto KTP untuk mengisi data otomatis dengan OCR</div>
                                     <div id="cameraContainer" class="mt-2 d-none">
                                         <div class="camera-overlay text-center py-1 bg-dark text-white mb-1 rounded">
-                                            <small><i class="bi bi-info-circle"></i> Harap arahkan perangkat dalam posisi landscape</small>
+                                            <small><i class="bi bi-info-circle"></i> Tempatkan kartu sesuai ruang yang diberikan</small>
                                         </div>
                                         <video id="cameraPreview" autoplay playsinline class="img-fluid border rounded" style="max-height: 300px;"></video>
                                         <div class="btn-group w-100 mt-2">
@@ -1087,10 +1087,10 @@ $satkerList = fetchRows("SELECT id, nama_satker FROM satker WHERE is_active = 1 
                 if (orientationMsg) {
                     if (!isLandscape()) {
                         orientationMsg.classList.add('bg-danger');
-                        orientationMsg.innerHTML = '<small><i class="bi bi-exclamation-triangle-fill"></i>Posisikan KTP memenuhi ruang kamera</small>';
+                        orientationMsg.innerHTML = '<small><i class="bi bi-exclamation-triangle-fill"></i>Posisikan KTP memenuhi ruang kamera, tidak masalah jika hasilnya terbalik</small>';
                     } else {
                         orientationMsg.classList.remove('bg-danger');
-                        orientationMsg.innerHTML = '<small><i class="bi bi-info-circle"></i> Perangkat dalam posisi landscape</small>';
+                        orientationMsg.innerHTML = '<small><i class="bi bi-info-circle"></i>Posisikan KTP memenuhi ruang kamera, tidak masalah jika hasilnya terbalik</small>';
                     }
                 }
             }
