@@ -3,9 +3,9 @@
 /**
  * Login Page
  * 
- * This file handles user authentication for the YankesDokpol application.
+ * This file handles user authentication for the HUT Bhayangkara ke-79 application.
  * 
- * @package YankesDokpol
+ * @package HUTBhayangkara79
  * @version 1.0
  */
 

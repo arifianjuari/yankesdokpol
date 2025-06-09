@@ -4,7 +4,7 @@
  * 
  * Halaman ini mengarahkan pengguna ke halaman daftar peserta
  * 
- * @package YankesDokpol
+ * @package HUTBhayangkara79
  * @version 1.0
  */
 

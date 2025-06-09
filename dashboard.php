@@ -4,9 +4,9 @@
  * Dashboard Page
  * 
  * This page displays the dashboard with statistics and visualizations
- * for the YankesDokpol application.
+ * for the HUT Bhayangkara ke-79 application.
  * 
- * @package YankesDokpol
+ * @package HUTBhayangkara79
  * @version 1.0
  */
 
