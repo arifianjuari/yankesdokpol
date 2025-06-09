@@ -23,12 +23,25 @@ jobs:
           mkdir -p ./deploy_folder
           rsync -av --exclude='.git/' --exclude='node_modules/' --exclude='vendor/' --exclude='upload/' --exclude='uploads/' --exclude='.github/' --exclude='.DS_Store' --exclude='Thumbs.db' --exclude='.env' --exclude='.env.example' --exclude='.env.local' --exclude='README.md' --exclude='LICENSE' --exclude='composer.lock' --exclude='package-lock.json' --exclude='yarn.lock' --exclude='.vscode/' --exclude='.idea/' --exclude='logs/' --exclude='temp/' --exclude='tmp/' --exclude='cache/' --exclude='*.log' --exclude='*.bak' --exclude='*.swp' --exclude='*.sql' --exclude='*.zip' --exclude='*.tar' --exclude='*.gz' --exclude='*.rar' --exclude='sshkey' --exclude='*.psd' --exclude='*.ai' --exclude='*.sketch' ./ ./deploy_folder/
 
-      - name: Deploy to Hostinger
-        uses: sebastianpopp/ftp-action@releases/v2
+      - name: Create archive for deployment
+        run: |
+          cd ./deploy_folder
+          zip -r ../deploy.zip .
+          cd ..
+          
+      - name: Deploy to Hostinger via lftp
+        run: |
+          sudo apt-get install -y lftp
+          lftp -c "set ftp:ssl-allow no; open -u ${{ secrets.FTP_USERNAME }},${{ secrets.FTP_PASSWORD }} ${{ secrets.FTP_HOST }}; mirror -R --delete --verbose ./deploy_folder /public_html/yankesdokpol"
+        
+      # Fallback method if lftp fails
+      - name: Deploy fallback (if lftp fails)
+        if: failure()
+        uses: kevinpainchaud/simple-ftp-deploy-action@v1.2.1
         with:
-          host: ${{ secrets.FTP_HOST }}
-          user: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
-          localDir: "./deploy_folder"
-          remoteDir: "/public_html/yankesdokpol"
-          options: "--delete --ascii"
+          ftp_host: ${{ secrets.FTP_HOST }}
+          ftp_username: ${{ secrets.FTP_USERNAME }}
+          ftp_password: ${{ secrets.FTP_PASSWORD }}
+          local_source_dir: "./deploy_folder/"
+          dist_target_dir: "/public_html/yankesdokpol/"
+          delete: "true"
