@@ -4,7 +4,6 @@ on:
   push:
     branches: [ main ]
 
-
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -15,74 +14,48 @@ jobs:
       with:
         fetch-depth: 0
     
-    - name: Install lftp
+    - name: Install rsync
       run: |
         sudo apt-get update
-        sudo apt-get install -y lftp
-    
+        sudo apt-get install -y rsync
+
     - name: List files for debugging
       run: |
         echo "Current directory:"
         pwd
         ls -la
-        
-    - name: Create deployment script
+        echo "\nRoot directory files:"
+        find . -maxdepth 1 -type f | sort
+        echo "\nSubdirectories:"
+        find . -maxdepth 1 -type d | sort
+
+    - name: Deploy using rsync
       run: |
-        cat > deploy.lftp << 'EOL'
-        set ftp:ssl-allow false
-        set ssl:verify-certificate no
-        set sftp:auto-confirm yes
+        echo "Starting deployment..."
+        echo "Uploading files to server..."
         
-        # Connect to server
-        open sftp://${{ secrets.SFTP_USERNAME }}:${{ secrets.SFTP_PASSWORD }}@46.202.186.237:65002
+        # Upload all files except those in .gitignore
+        rsync -avz -e 'ssh -o StrictHostKeyChecking=no -p 65002' \
+          --exclude '.git/' \
+          --exclude '.github/' \
+          --exclude '.gitignore' \
+          --exclude '.env' \
+          --exclude 'node_modules/' \
+          --exclude 'vendor/' \
+          --exclude 'sshkey*' \
+          --delete \
+          ./ \
+          ${{ secrets.SFTP_USERNAME }}@46.202.186.237:/home/u609399718/domains/biddokkesjatim.org/public_html/yankesdokpol/
         
-        # Change to target directory
-        cd /home/u609399718/domains/biddokkesjatim.org/public_html/yankesdokpol
+        echo "Setting permissions..."
+        ssh -o StrictHostKeyChecking=no -p 65002 ${{ secrets.SFTP_USERNAME }}@46.202.186.237 \
+          "cd /home/u609399718/domains/biddokkesjatim.org/public_html/yankesdokpol && \
+           find . -type d -exec chmod 755 {} \; && \
+           find . -type f -exec chmod 644 {} \; && \
+           chmod -R 777 uploads dokumentasi"
         
-        # Upload all files from root
-        lcd $GITHUB_WORKSPACE
-        
-        # Upload all PHP files
-        mput -E *.php
-        
-        # Upload other root files
-        mput -E .htaccess
-        mput -E README.md
-        mput -E *.json
-        mput -E *.js
-        mput -E *.html
-        
-        # Create and upload directories
-        !mkdir -p assets api config content includes uploads dokumentasi
-        
-        # Upload each directory
-        mirror -R -v --parallel=5 --exclude .git/ --exclude .github/ --exclude .gitignore --exclude .env --exclude node_modules/ assets/ ./assets/
-        mirror -R -v --parallel=5 --exclude .git/ --exclude .github/ --exclude .gitignore --exclude .env --exclude node_modules/ api/ ./api/
-        mirror -R -v --parallel=5 --exclude .git/ --exclude .github/ --exclude .gitignore --exclude .env --exclude node_modules/ config/ ./config/
-        mirror -R -v --parallel=5 --exclude .git/ --exclude .github/ --exclude .gitignore --exclude .env --exclude node_modules/ content/ ./content/
-        mirror -R -v --parallel=5 --exclude .git/ --exclude .github/ --exclude .gitignore --exclude .env --exclude node_modules/ includes/ ./includes/
-        
-        # Set permissions
-        chmod -R 755 .
-        chmod -R 777 uploads
-        chmod -R 777 dokumentasi
-        
-        # List all files after upload
-        ls -la
-        
-        bye
-        EOL
-        
-        # Make script executable
-        chmod +x deploy.lftp
-        
-    - name: Run deployment
-      run: |
-        echo "Running deployment script..."
-        lftp -f deploy.lftp
-        echo "Deployment completed."
-    
-    - name: Verify deployment
-      run: |
         echo "Verifying deployment..."
-        ssh -o StrictHostKeyChecking=no -p 65002 ${{ secrets.SFTP_USERNAME }}@46.202.186.237 "ls -la /home/u609399718/domains/biddokkesjatim.org/public_html/yankesdokpol"
+        ssh -o StrictHostKeyChecking=no -p 65002 ${{ secrets.SFTP_USERNAME }}@46.202.186.237 \
+          "ls -la /home/u609399718/domains/biddokkesjatim.org/public_html/yankesdokpol"
+        
+        echo "Deployment completed successfully!"
