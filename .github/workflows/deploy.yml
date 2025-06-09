@@ -13,32 +13,33 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v3
 
-    - name: Install sshpass
+    - name: Install dependencies
       run: sudo apt-get update && sudo apt-get install -y sshpass rsync
-
-    - name: Add known hosts
-      run: |
-        mkdir -p ~/.ssh
-        chmod 700 ~/.ssh
-        ssh-keyscan -H ${{ secrets.REMOTE_HOST }} >> ~/.ssh/known_hosts
-        chmod 600 ~/.ssh/known_hosts
 
     - name: Deploy to VPS
       env:
         SSHPASS: ${{ secrets.VPS_PASSWORD }}
         REMOTE_DIR: ${{ secrets.REMOTE_DIR || '/var/www/html/yankesdokpol' }}
         REMOTE_USER: ${{ secrets.REMOTE_USER || 'root' }}
-        REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
+        REMOTE_HOST: ${{ secrets.REMOTE_HOST || '31.97.187.135' }}
       run: |
         # Test connection
+        export SSHPASS=$SSHPASS
         sshpass -e ssh -o StrictHostKeyChecking=no $REMOTE_USER@$REMOTE_HOST "echo 'Connection successful'"
         
         # Create necessary directories
         sshpass -e ssh -o StrictHostKeyChecking=no $REMOTE_USER@$REMOTE_HOST \
           "mkdir -p $REMOTE_DIR $REMOTE_DIR/uploads $REMOTE_DIR/dokumentasi"
         
-        # Deploy using rsync
-        sshpass -e rsync -avz --delete \
+        # Create temporary script for rsync
+        echo '#!/bin/bash
+        export SSHPASS='$SSHPASS'
+        exec sshpass -e ssh -o StrictHostKeyChecking=no "$@"
+        ' > ssh_with_pass.sh
+        chmod +x ssh_with_pass.sh
+        
+        # Deploy using rsync with custom ssh command
+        rsync -avz --delete \
           --exclude='.git' \
           --exclude='.github' \
           --exclude='.gitignore' \
@@ -49,11 +50,11 @@ jobs:
           --exclude='assets/uploads' \
           --exclude='uploads' \
           --exclude='dokumentasi' \
-          -e "sshpass -e ssh -o StrictHostKeyChecking=no" \
+          -e "./ssh_with_pass.sh" \
           ./ \
           $REMOTE_USER@$REMOTE_HOST:$REMOTE_DIR/
-
-        # Set permissions
+        
+        # Set permissions  
         sshpass -e ssh -o StrictHostKeyChecking=no $REMOTE_USER@$REMOTE_HOST "
           chown -R www-data:www-data $REMOTE_DIR
           find $REMOTE_DIR -type d -not -path \"$REMOTE_DIR/uploads*\" -not -path \"$REMOTE_DIR/dokumentasi*\" -exec chmod 755 {} \;
