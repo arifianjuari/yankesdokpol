@@ -18,7 +18,7 @@ class DatabaseConnection
 {
     private static $instance = null;
     private $connection = null;
-    private $host = 'srv859992.hstgr.cloud';
+    private $host = 'auth-db1636.hstgr.io';
     private $username = 'u609399718_yankesdokpol';
     private $password = 'Juari@2591';
     private $database = 'u609399718_yankesdokpol';
@@ -198,10 +198,15 @@ function executeQuery($sql, $params = [])
 
             if (!empty($types)) {
                 // Prepare the parameter reference list
-                $bindParams = array_merge([&$types], array_map(function (&$param) {
-                    return $param;
-                }, $bindParams));
-                call_user_func_array([$stmt, 'bind_param'], $bindParams);
+                $bindParams = array_merge([$types], $bindParams);
+
+                // Create references for bind_param
+                $refs = array();
+                foreach ($bindParams as $key => $value) {
+                    $refs[$key] = &$bindParams[$key];
+                }
+
+                call_user_func_array([$stmt, 'bind_param'], $refs);
             }
         }
 
@@ -242,22 +247,23 @@ function executeQuery($sql, $params = [])
  */
 function fetchRow($sql, $params = [])
 {
-    $result = executeQuery($sql, $params);
+    if (is_string($sql)) {
+        $result = executeQuery($sql, $params);
+        if ($result === false) {
+            return null;
+        }
 
-    // Handle failed query
-    if ($result === false) {
-        return null;
-    }
-
-    // Handle successful query result
-    if ($result instanceof mysqli_result) {
         if ($result->num_rows > 0) {
             $row = $result->fetch_assoc();
             $result->free();
             return $row;
-        } else {
-            $result->free();
         }
+        return null;
+    } elseif ($sql instanceof mysqli_result) {
+        if ($sql->num_rows > 0) {
+            return $sql->fetch_assoc();
+        }
+        return null;
     }
 
     return null;
@@ -273,19 +279,25 @@ function fetchRow($sql, $params = [])
 function fetchRows($sql, $params = [])
 {
     $rows = [];
-    $result = executeQuery($sql, $params);
 
-    // Handle failed query
-    if ($result === false) {
-        return $rows;
-    }
+    if (is_string($sql)) {
+        $result = executeQuery($sql, $params);
+        if ($result === false) {
+            return $rows;
+        }
 
-    // Process result set
-    if ($result instanceof mysqli_result) {
-        while ($row = $result->fetch_assoc()) {
+        if ($result instanceof mysqli_result) {
+            while ($row = $result->fetch_assoc()) {
+                $rows[] = $row;
+            }
+            $result->free();
+        }
+    } elseif ($sql instanceof mysqli_result) {
+        while ($row = $sql->fetch_assoc()) {
             $rows[] = $row;
         }
-        $result->free();
+        // Note: We don't free the result here as it was passed in
+        // and might be used elsewhere
     }
 
     return $rows;

@@ -1,64 +1,29 @@
-name: Deploy to VPS
+name: Deploy ke Hostinger via FTP
 
 on:
   push:
-    branches: [ main ]
+    branches:
+      - main
+
+  workflow_dispatch:  # Menambahkan opsi trigger manual di GitHub Actions
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
-
+    timeout-minutes: 30  # Menambahkan timeout di tingkat job
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 2  # Mengambil hanya 2 commit terakhir untuk mempercepat
 
-    - name: Install dependencies
-      run: sudo apt-get update && sudo apt-get install -y sshpass rsync
-
-    - name: Deploy to VPS
-      env:
-        SSHPASS: ${{ secrets.VPS_PASSWORD }}
-        REMOTE_DIR: ${{ secrets.REMOTE_DIR || '/var/www/html/yankesdokpol' }}
-        REMOTE_USER: ${{ secrets.REMOTE_USER || 'root' }}
-        REMOTE_HOST: ${{ secrets.REMOTE_HOST || '31.97.187.135' }}
-      run: |
-        # Test connection
-        export SSHPASS=$SSHPASS
-        sshpass -e ssh -o StrictHostKeyChecking=no $REMOTE_USER@$REMOTE_HOST "echo 'Connection successful'"
-        
-        # Create necessary directories
-        sshpass -e ssh -o StrictHostKeyChecking=no $REMOTE_USER@$REMOTE_HOST \
-          "mkdir -p $REMOTE_DIR $REMOTE_DIR/uploads $REMOTE_DIR/dokumentasi"
-        
-        # Create temporary script for rsync
-        echo '#!/bin/bash
-        export SSHPASS='$SSHPASS'
-        exec sshpass -e ssh -o StrictHostKeyChecking=no "$@"
-        ' > ssh_with_pass.sh
-        chmod +x ssh_with_pass.sh
-        
-        # Deploy using rsync with custom ssh command
-        rsync -avz --delete \
-          --exclude='.git' \
-          --exclude='.github' \
-          --exclude='.gitignore' \
-          --exclude='.env' \
-          --exclude='node_modules' \
-          --exclude='vendor' \
-          --exclude='sshkey*' \
-          --exclude='assets/uploads' \
-          --exclude='uploads' \
-          --exclude='dokumentasi' \
-          -e "./ssh_with_pass.sh" \
-          ./ \
-          $REMOTE_USER@$REMOTE_HOST:$REMOTE_DIR/
-        
-        # Set permissions  
-        sshpass -e ssh -o StrictHostKeyChecking=no $REMOTE_USER@$REMOTE_HOST "
-          chown -R www-data:www-data $REMOTE_DIR
-          find $REMOTE_DIR -type d -not -path \"$REMOTE_DIR/uploads*\" -not -path \"$REMOTE_DIR/dokumentasi*\" -exec chmod 755 {} \;
-          find $REMOTE_DIR -type f -not -path \"$REMOTE_DIR/uploads*\" -not -path \"$REMOTE_DIR/dokumentasi*\" -exec chmod 644 {} \;
-          chmod -R 777 $REMOTE_DIR/uploads $REMOTE_DIR/dokumentasi 2>/dev/null
-          echo 'Deployment completed successfully!'
-        "
+      - name: Deploy via FTP
+        uses: SamKirkland/FTP-Deploy-Action@4.3.0
+        with:
+          server: ${{ secrets.FTP_HOST }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          local-dir: ./
+          server-dir: /public_html/
+          exclude: |
+           

@@ -1,5 +1,5 @@
 // Service Worker for HUT Bhayangkara 79 PWA
-const CACHE_NAME = 'hut-bhayangkara-79-cache-v3';
+const CACHE_NAME = 'hut-bhayangkara-79-cache-v4';
 
 // Assets to cache immediately (minimal set for offline functionality)
 const CORE_ASSETS = [
@@ -46,10 +46,8 @@ self.addEventListener('install', event => {
           return Promise.resolve();
         });
       })
-      .then(() => {
-        console.log('[ServiceWorker] Skipping waiting');
-        return self.skipWaiting();
-      })
+      // Tidak langsung memanggil skipWaiting() untuk menghindari refresh otomatis
+      // yang dapat menyebabkan looping
   );
 });
 
