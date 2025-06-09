@@ -63,7 +63,6 @@ Aplikasi ini membutuhkan beberapa dependensi yang dikelola melalui Composer. Jal
 ```bash
 composer install
 ```
-
 Jika Composer belum terinstal, ikuti petunjuk instalasi di [getcomposer.org](https://getcomposer.org/download/).
 
 ### 2. Instalasi Tesseract OCR
