@@ -17,13 +17,13 @@ jobs:
       uses: webfactory/ssh-agent@v0.7.0
       with:
         ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
-    
-        - name: Debug SSH
-        run: |
-          echo "SSH_AUTH_SOCK: $SSH_AUTH_SOCK"
-          ls -la ~/.ssh
-          ssh-add -l
-          ssh -v -o StrictHostKeyChecking=no ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }} "echo 'SSH connection successful'"
+
+    - name: Debug SSH
+      run: |
+        echo "SSH_AUTH_SOCK: $SSH_AUTH_SOCK"
+        ls -la ~/.ssh
+        ssh-add -l
+        ssh -v -o StrictHostKeyChecking=no ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }} "echo 'SSH connection successful'"
 
     - name: Add known hosts
       run: |
@@ -32,8 +32,10 @@ jobs:
         ssh-keyscan -H ${{ secrets.REMOTE_HOST }} >> ~/.ssh/known_hosts
         chmod 600 ~/.ssh/known_hosts
 
-    - name: Install rsync
-      run: sudo apt-get update && sudo apt-get install -y rsync
+    - name: Install rsync and sshpass
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y rsync sshpass
 
     - name: Deploy to VPS
       env:
@@ -42,14 +44,15 @@ jobs:
         REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
         SSHPASS: ${{ secrets.VPS_PASSWORD }}
       run: |
-       sshpass -e ssh -o StrictHostKeyChecking=no ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }} "echo 'Connection successful'"
+        # Test connection first
+        sshpass -e ssh -o StrictHostKeyChecking=no $REMOTE_USER@$REMOTE_HOST "echo 'Connection successful'"
+        
         # Create necessary directories
-        ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null \
-          ${REMOTE_USER}@${REMOTE_HOST} \
-          "mkdir -p ${REMOTE_DIR} ${REMOTE_DIR}/uploads ${REMOTE_DIR}/dokumentasi"
+        sshpass -e ssh -o StrictHostKeyChecking=no $REMOTE_USER@$REMOTE_HOST \
+          "mkdir -p $REMOTE_DIR $REMOTE_DIR/uploads $REMOTE_DIR/dokumentasi"
         
         # Deploy using rsync
-        rsync -avz --delete \
+        sshpass -e rsync -avz --delete \
           --exclude='.git' \
           --exclude='.github' \
           --exclude='.gitignore' \
@@ -60,16 +63,15 @@ jobs:
           --exclude='assets/uploads' \
           --exclude='uploads' \
           --exclude='dokumentasi' \
-          -e "ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null" \
+          -e "ssh -o StrictHostKeyChecking=no" \
           ./ \
-          ${REMOTE_USER}@${REMOTE_HOST}:${REMOTE_DIR}/
+          $REMOTE_USER@$REMOTE_HOST:$REMOTE_DIR/
 
         # Set permissions
-        ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null \
-          ${REMOTE_USER}@${REMOTE_HOST} "
-          chown -R www-data:www-data ${REMOTE_DIR}
-          find ${REMOTE_DIR} -type d -not -path \"${REMOTE_DIR}/uploads*\" -not -path \"${REMOTE_DIR}/dokumentasi*\" -exec chmod 755 {} \;
-          find ${REMOTE_DIR} -type f -not -path \"${REMOTE_DIR}/uploads*\" -not -path \"${REMOTE_DIR}/dokumentasi*\" -exec chmod 644 {} \;
-          chmod -R 777 ${REMOTE_DIR}/uploads ${REMOTE_DIR}/dokumentasi 2>/dev/null
+        sshpass -e ssh -o StrictHostKeyChecking=no $REMOTE_USER@$REMOTE_HOST "
+          chown -R www-data:www-data $REMOTE_DIR
+          find $REMOTE_DIR -type d -not -path \"$REMOTE_DIR/uploads*\" -not -path \"$REMOTE_DIR/dokumentasi*\" -exec chmod 755 {} \;
+          find $REMOTE_DIR -type f -not -path \"$REMOTE_DIR/uploads*\" -not -path \"$REMOTE_DIR/dokumentasi*\" -exec chmod 644 {} \;
+          chmod -R 777 $REMOTE_DIR/uploads $REMOTE_DIR/dokumentasi 2>/dev/null
           echo 'Deployment completed successfully!'
         "
