@@ -107,3 +107,9 @@ PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
 
 PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
 
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+

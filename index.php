@@ -8,6 +8,6 @@
  * @version 1.0
  */
 
-// Redirect to daftar_peserta.php
-header('Location: daftar_peserta.php');
+// Redirect to form_peserta.php
+header('Location: form_peserta.php');
 exit;
