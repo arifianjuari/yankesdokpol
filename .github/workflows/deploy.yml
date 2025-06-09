@@ -7,6 +7,7 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    timeout-minutes: 15  # Timeout setelah 15 menit
 
     steps:
     - name: Checkout code
@@ -20,34 +21,46 @@ jobs:
     - name: Add known hosts
       run: |
         mkdir -p ~/.ssh
+        chmod 700 ~/.ssh
         ssh-keyscan -H ${{ secrets.REMOTE_HOST }} >> ~/.ssh/known_hosts
+        chmod 600 ~/.ssh/known_hosts
+
+    - name: Install rsync
+      run: sudo apt-get update && sudo apt-get install -y rsync
 
     - name: Deploy to VPS
+      env:
+        REMOTE_DIR: ${{ secrets.REMOTE_DIR || '/var/www/html/yankesdokpol' }}
+        REMOTE_USER: ${{ secrets.REMOTE_USER || 'root' }}
+        REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
       run: |
-        # Buat direktori jika belum ada
-        ssh -o StrictHostKeyChecking=no ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }} \
-          "mkdir -p ${{ secrets.REMOTE_DIR }} ${{ secrets.REMOTE_DIR }}/uploads ${{ secrets.REMOTE_DIR }}/dokumentasi"
+        # Create necessary directories
+        ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null \
+          ${REMOTE_USER}@${REMOTE_HOST} \
+          "mkdir -p ${REMOTE_DIR} ${REMOTE_DIR}/uploads ${REMOTE_DIR}/dokumentasi"
         
-        # Sinkronisasi file menggunakan rsync
+        # Deploy using rsync
         rsync -avz --delete \
-          --exclude '.git' \
-          --exclude '.github' \
-          --exclude '.gitignore' \
-          --exclude '.env' \
-          --exclude 'node_modules' \
-          --exclude 'vendor' \
-          --exclude 'sshkey*' \
-          --exclude 'assets/uploads' \
-          --exclude 'uploads' \
-          --exclude 'dokumentasi' \
-          -e "ssh -o StrictHostKeyChecking=no" \
+          --exclude='.git' \
+          --exclude='.github' \
+          --exclude='.gitignore' \
+          --exclude='.env' \
+          --exclude='node_modules' \
+          --exclude='vendor' \
+          --exclude='sshkey*' \
+          --exclude='assets/uploads' \
+          --exclude='uploads' \
+          --exclude='dokumentasi' \
+          -e "ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null" \
           ./ \
-          ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }}:${{ secrets.REMOTE_DIR }}/
+          ${REMOTE_USER}@${REMOTE_HOST}:${REMOTE_DIR}/
 
-        # Set permission
-        ssh -o StrictHostKeyChecking=no ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }} "
-          chown -R www-data:www-data ${{ secrets.REMOTE_DIR }}
-          find ${{ secrets.REMOTE_DIR }} -type d -exec chmod 755 {} \;
-          find ${{ secrets.REMOTE_DIR }} -type f -exec chmod 644 {} \;
-          chmod -R 777 ${{ secrets.REMOTE_DIR }}/uploads ${{ secrets.REMOTE_DIR }}/dokumentasi 2>/dev/null
+        # Set permissions
+        ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null \
+          ${REMOTE_USER}@${REMOTE_HOST} "
+          chown -R www-data:www-data ${REMOTE_DIR}
+          find ${REMOTE_DIR} -type d -not -path \"${REMOTE_DIR}/uploads*\" -not -path \"${REMOTE_DIR}/dokumentasi*\" -exec chmod 755 {} \;
+          find ${REMOTE_DIR} -type f -not -path \"${REMOTE_DIR}/uploads*\" -not -path \"${REMOTE_DIR}/dokumentasi*\" -exec chmod 644 {} \;
+          chmod -R 777 ${REMOTE_DIR}/uploads ${REMOTE_DIR}/dokumentasi 2>/dev/null
+          echo 'Deployment completed successfully!'
         "
