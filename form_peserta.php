@@ -19,7 +19,7 @@ require_once 'includes/validation.php';
 require_once 'includes/ocr.php';
 
 // Page title
-$pageTitle = 'YankesDokpol - Pendaftaran Peserta';
+$pageTitle = 'HUT Bhayangkara ke-79 - Pendaftaran Peserta';
 
 // Hapus data peserta dari session jika halaman di-refresh
 if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_SESSION['existing_participant'])) {
@@ -672,10 +672,16 @@ $satkerList = fetchRows("SELECT id, nama_satker FROM satker WHERE is_active = 1 
 ?>
 <!DOCTYPE html>
 <html lang="id">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#007bff">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="manifest" href="/manifest.json">
+    <link rel="icon" type="image/png" sizes="192x192" href="/assets/img/icons/icon-192x192.png">
+    <link rel="apple-touch-icon" href="/assets/img/icons/icon-192x192.png">
     <title><?php echo $pageTitle; ?></title>
     <?php include 'includes/pwa_head.php'; ?>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">

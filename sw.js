@@ -5,7 +5,16 @@ const CACHE_NAME = 'yankesdokpol-cache-v2';
 const CORE_ASSETS = [
   './offline.html',
   './assets/css/style.css',
-  './assets/js/pwa.js'
+  './assets/js/pwa.js',
+  '/assets/img/icons/icon-72x72.png',
+  '/assets/img/icons/icon-96x96.png',
+  '/assets/img/icons/icon-128x128.png',
+  '/assets/img/icons/icon-144x144.png',
+  '/assets/img/icons/icon-152x152.png',
+  '/assets/img/icons/icon-192x192.png',
+  '/assets/img/icons/icon-384x384.png',
+  '/assets/img/icons/icon-512x512.png',
+  '/manifest.json'
 ];
 
 // Additional assets to cache when they're requested

@@ -1,6 +1,6 @@
 {
-  "name": "YankesDokpol",
-  "short_name": "YankesDokpol",
+  "name": "HUT Bhayangkara ke-79",
+  "short_name": "HUT Bhayangkara 79",
   "description": "Sistem Informasi Pencatatan Data Peserta Kegiatan Bakti Kesehatan",
   "start_url": "./index.php",
   "display": "standalone",
