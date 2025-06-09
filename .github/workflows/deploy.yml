@@ -37,7 +37,7 @@ jobs:
         open sftp://${{ secrets.SFTP_USERNAME }}:${{ secrets.SFTP_PASSWORD }}@46.202.186.237:65002
         
         # Change to target directory
-        cd /domains/biddokkesjatim.org/public_html/yankesdokpol
+        cd /home/u609399718/domains/biddokkesjatim.org/public_html/yankesdokpol
         
         # Upload all files from root
         lcd $GITHUB_WORKSPACE
@@ -85,4 +85,4 @@ jobs:
     - name: Verify deployment
       run: |
         echo "Verifying deployment..."
-        ssh -o StrictHostKeyChecking=no -p 65002 ${{ secrets.SFTP_USERNAME }}@46.202.186.237 "ls -la /domains/biddokkesjatim.org/public_html/yankesdokpol"
+        ssh -o StrictHostKeyChecking=no -p 65002 ${{ secrets.SFTP_USERNAME }}@46.202.186.237 "ls -la /home/u609399718/domains/biddokkesjatim.org/public_html/yankesdokpol"
