@@ -12,43 +12,50 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v3
-      
+      with:
+        fetch-depth: 0
+    
     - name: Install lftp
       run: |
         sudo apt-get update
         sudo apt-get install -y lftp
+    
+    - name: List files for debugging
+      run: |
+        echo "Current directory:"
+        pwd
+        ls -la
         
     - name: Create deployment script
       run: |
         cat > deploy.lftp << 'EOL'
+        set ftp:ssl-allow false
+        set ssl:verify-certificate no
         set sftp:auto-confirm yes
+        
+        # Connect to server
         open sftp://${{ secrets.SFTP_USERNAME }}:${{ secrets.SFTP_PASSWORD }}@46.202.186.237:65002
         
-        # Create main directory
-        mkdir -p /domains/biddokkesjatim.org/public_html/yankesdokpol
+        # Change to target directory
         cd /domains/biddokkesjatim.org/public_html/yankesdokpol
         
-        # Create necessary directories
-        mkdir -p uploads
-        mkdir -p dokumentasi
-        mkdir -p assets
-        mkdir -p api
-        mkdir -p config
-        mkdir -p content
-        mkdir -p includes
-        
-        # Upload all files
+        # Upload all files from root
         lcd $GITHUB_WORKSPACE
         
-        # Upload root files
+        # Upload all PHP files
         mput -E *.php
-        mput -E *.html
-        mput -E *.json
-        mput -E *.js
+        
+        # Upload other root files
         mput -E .htaccess
         mput -E README.md
+        mput -E *.json
+        mput -E *.js
+        mput -E *.html
         
-        # Upload directories
+        # Create and upload directories
+        !mkdir -p assets api config content includes uploads dokumentasi
+        
+        # Upload each directory
         mirror -R -v --parallel=5 --exclude .git/ --exclude .github/ --exclude .gitignore --exclude .env --exclude node_modules/ assets/ ./assets/
         mirror -R -v --parallel=5 --exclude .git/ --exclude .github/ --exclude .gitignore --exclude .env --exclude node_modules/ api/ ./api/
         mirror -R -v --parallel=5 --exclude .git/ --exclude .github/ --exclude .gitignore --exclude .env --exclude node_modules/ config/ ./config/
@@ -60,6 +67,9 @@ jobs:
         chmod -R 777 uploads
         chmod -R 777 dokumentasi
         
+        # List all files after upload
+        ls -la
+        
         bye
         EOL
         
@@ -68,4 +78,11 @@ jobs:
         
     - name: Run deployment
       run: |
+        echo "Running deployment script..."
         lftp -f deploy.lftp
+        echo "Deployment completed."
+    
+    - name: Verify deployment
+      run: |
+        echo "Verifying deployment..."
+        ssh -o StrictHostKeyChecking=no -p 65002 ${{ secrets.SFTP_USERNAME }}@46.202.186.237 "ls -la /domains/biddokkesjatim.org/public_html/yankesdokpol"
