@@ -15,38 +15,40 @@
     .chart-container {
         position: relative;
         margin: auto;
-        height: 250px; /* Tinggi dikurangi untuk kartu lebih kecil */
+        height: 250px;
+        /* Tinggi dikurangi untuk kartu lebih kecil */
         width: 100%;
     }
-    
+
     .card {
         display: flex;
         flex-direction: column;
         height: 100%;
     }
-    
+
     .card-body {
         flex: 1;
         display: flex;
         flex-direction: column;
         padding: 1rem;
     }
-    
+
     .card-header {
         padding: 0.75rem 1rem;
         background-color: #f8f9fa;
-        border-bottom: 1px solid rgba(0,0,0,.125);
+        border-bottom: 1px solid rgba(0, 0, 0, .125);
     }
-    
+
     .card-header h6 {
         font-weight: 600;
         margin: 0;
     }
-    
+
     /* Responsive adjustments */
     @media (max-width: 768px) {
         .chart-container {
-            height: 200px; /* Tinggi dikurangi juga untuk mobile */
+            height: 200px;
+            /* Tinggi dikurangi juga untuk mobile */
         }
     }
 </style>
@@ -54,7 +56,12 @@
 <!-- Filter Section -->
 <div class="card mb-4">
     <div class="card-body">
-        <div class="row align-items-center">
+        <div class="row mb-3 align-items-center">
+            <div class="col-md-auto mb-2 mb-md-0">
+                <a href="form_peserta.php" class="btn btn-sm btn-outline-primary">
+                    <i class="bi bi-arrow-left-circle"></i>ke Form Pendaftaran
+                </a>
+            </div>
             <div class="col-md-4">
                 <label for="filter-acara" class="form-label">Pilih Acara</label>
                 <select id="filter-acara" class="form-select">
@@ -79,32 +86,7 @@
 
 <!-- Visualisasi Data Section -->
 <div class="row">
-    <div class="col-md-6 mb-4">
-        <div class="card h-100">
-            <div class="card-header">
-                <h6 class="mb-0">Distribusi Jenis Layanan</h6>
-            </div>
-            <div class="card-body">
-                <div class="chart-container">
-                    <canvas id="chart-layanan"></canvas>
-                </div>
-                <div class="text-center mt-2 text-muted small" id="no-data-layanan" style="display:none">Tidak ada data</div>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-6 mb-4">
-        <div class="card h-100">
-            <div class="card-header">
-                <h6 class="mb-0">Top 10 SATKER Peserta</h6>
-            </div>
-            <div class="card-body">
-                <div class="chart-container">
-                    <canvas id="chart-satker"></canvas>
-                </div>
-                <div class="text-center mt-2 text-muted small" id="no-data-satker" style="display:none">Tidak ada data SATKER</div>
-            </div>
-        </div>
-    </div>
+    <!-- Baris 1: Total Peserta per Acara dan Peserta per Jenis Layanan -->
     <div class="col-md-6 mb-4">
         <div class="card h-100">
             <div class="card-header">
@@ -131,7 +113,37 @@
             </div>
         </div>
     </div>
+
+    <!-- Baris 2: Distribusi Jenis Layanan dan Top 10 SATKER -->
     <div class="col-md-6 mb-4">
+        <div class="card h-100">
+            <div class="card-header">
+                <h6 class="mb-0">Distribusi Jenis Layanan</h6>
+            </div>
+            <div class="card-body">
+                <div class="chart-container">
+                    <canvas id="chart-layanan"></canvas>
+                </div>
+                <div class="text-center mt-2 text-muted small" id="no-data-layanan" style="display:none">Tidak ada data layanan</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 mb-4">
+        <div class="card h-100">
+            <div class="card-header">
+                <h6 class="mb-0">Top 10 SATKER Peserta</h6>
+            </div>
+            <div class="card-body">
+                <div class="chart-container">
+                    <canvas id="chart-satker"></canvas>
+                </div>
+                <div class="text-center mt-2 text-muted small" id="no-data-satker" style="display:none">Tidak ada data SATKER</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Baris 3: Distribusi Usia Peserta (full width) -->
+    <div class="col-12 mb-4">
         <div class="card h-100">
             <div class="card-header">
                 <h6 class="mb-0">Distribusi Usia Peserta</h6>

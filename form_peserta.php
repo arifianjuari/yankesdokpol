@@ -79,7 +79,7 @@ if (isset($_GET['nik']) && !empty($_GET['nik'])) {
             $fotoKegiatanData = fetchRow(
                 "SELECT foto_kegiatan FROM peserta_layanan 
                  WHERE nik = ? AND acara_id = ? 
-                 LIMIT 1", 
+                 LIMIT 1",
                 [$nikToEdit, $acaraId]
             );
             if (!empty($fotoKegiatanData['foto_kegiatan'])) {
@@ -257,26 +257,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Handle foto_kegiatan separately since it's now in peserta_layanan table
     if (isset($_FILES['foto_kegiatan']) && $_FILES['foto_kegiatan']['error'] === UPLOAD_ERR_OK) {
         $uploadDir = 'assets/uploads/dokumentasi';
-        
+
         // Generate a unique filename for the uploaded foto_kegiatan
         $ext = pathinfo($_FILES['foto_kegiatan']['name'], PATHINFO_EXTENSION);
         $customFilename = 'kegiatan_' . $nik . '_' . uniqid() . '.' . $ext;
-        
+
         $uploadResult = uploadFile($_FILES['foto_kegiatan'], $uploadDir, $customFilename);
 
         if ($uploadResult['success']) {
             // Store just the filename, not the full path
             $uploadedFiles['foto_kegiatan'] = basename($uploadResult['filename']);
-            
+
             // If we have an existing foto_kegiatan for this acara, mark it for deletion
             if ($acaraId && $existingParticipant) {
                 $currentFoto = fetchRow(
                     "SELECT foto_kegiatan FROM peserta_layanan 
                      WHERE nik = ? AND acara_id = ? 
-                     LIMIT 1", 
+                     LIMIT 1",
                     [$nik, $acaraId]
                 );
-                
+
                 if (!empty($currentFoto['foto_kegiatan'])) {
                     $_SESSION['old_foto_kegiatan'] = $currentFoto['foto_kegiatan'];
                 }
@@ -290,20 +290,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     foreach ($fileFields as $field) {
         // Skip foto_kegiatan as it's handled separately and we don't want to process it twice
         if ($field === 'foto_kegiatan') continue;
-        
+
         if (isset($_FILES[$field]) && $_FILES[$field]['error'] === UPLOAD_ERR_OK) {
             $uploadDir = 'assets/uploads/' . ($field === 'file_ktp' ? 'ktp' : 'tanda_anggota');
-            
+
             // Handle existing files for the same user
             if ($existingParticipant && !empty($existingParticipant[$field])) {
-                $oldFilePath = __DIR__ . '/assets/uploads/' . 
-                              ($field === 'file_ktp' ? 'ktp/' : 'tanda_anggota/') . 
-                              basename($existingParticipant[$field]);
-                
+                $oldFilePath = __DIR__ . '/assets/uploads/' .
+                    ($field === 'file_ktp' ? 'ktp/' : 'tanda_anggota/') .
+                    basename($existingParticipant[$field]);
+
                 if (file_exists($oldFilePath)) {
                     if (unlink($oldFilePath)) {
                         error_log("Deleted old {$field} file during upload: {$oldFilePath}");
-                        
+
                         // Also delete optimized KTP file if it exists
                         if ($field === 'file_ktp') {
                             $pathInfo = pathinfo($oldFilePath);
@@ -324,7 +324,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $ext = pathinfo($_FILES[$field]['name'], PATHINFO_EXTENSION);
                 $customFilename = 'ktp_' . $nik . '_' . uniqid() . '.' . $ext;
                 $uploadResult = uploadFile($_FILES[$field], $uploadDir, $customFilename);
-                
+
                 // Simpan path file KTP di session untuk digunakan oleh OCR
                 if ($uploadResult['success']) {
                     $_SESSION['ocr_ktp_file'] = $uploadResult['filename'];
@@ -333,7 +333,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 // Standard upload for other files
                 $uploadResult = uploadFile($_FILES[$field], $uploadDir);
             }
-            
+
             // Process upload result
             if ($uploadResult['success']) {
                 $uploadedFiles[$field] = basename($uploadResult['filename']);
@@ -383,13 +383,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         }
                     }
                 }
-                
+
                 // Handle foto_kegiatan deletion
                 if (isset($_POST['hapus_foto_kegiatan']) && $_POST['hapus_foto_kegiatan'] === '1' && !empty($existingParticipant)) {
                     // Get current foto_kegiatan for this acara
                     $currentFotoQuery = "SELECT foto_kegiatan FROM peserta_layanan WHERE nik = ? AND acara_id = ? LIMIT 1";
                     $currentFoto = fetchRow($currentFotoQuery, [$nik, $acaraId]);
-                    
+
                     if (!empty($currentFoto['foto_kegiatan'])) {
                         $oldFotoPath = __DIR__ . '/assets/uploads/dokumentasi/' . basename($currentFoto['foto_kegiatan']);
                         if (file_exists($oldFotoPath)) {
@@ -400,11 +400,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             }
                         }
                     }
-                    
+
                     // Set null for database update
                     $fotoKegiatanValue = null;
                 }
-                
+
                 // Add uploaded files to the update query if they exist
                 foreach ($uploadedFiles as $field => $filename) {
                     if ($field !== 'foto_kegiatan') { // foto_kegiatan is handled separately in peserta_layanan
@@ -412,7 +412,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         $params[] = $filename;
                     }
                 }
-                
+
                 // Execute the update query for peserta table
                 $updateQuery .= " WHERE nik = ?";
                 $params[] = $nik;
@@ -421,17 +421,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             } else {
                 // Insert new participant
                 $insertQuery = "INSERT INTO peserta (nik, nama, alamat, tanggal_lahir, nomor_hp";
-                
+
                 // Add file fields to query if they exist
                 foreach ($uploadedFiles as $field => $filename) {
                     if ($field !== 'foto_kegiatan') { // foto_kegiatan is handled in peserta_layanan
                         $insertQuery .= ", {$field}";
                     }
                 }
-                
+
                 $insertQuery .= ") VALUES (?, ?, ?, ?, ?";
                 $params = [$nik, $nama, $alamat, $tanggalLahir, $nomorHP];
-                
+
                 // Add file values if they exist
                 foreach ($uploadedFiles as $field => $filename) {
                     if ($field !== 'foto_kegiatan') {
@@ -439,12 +439,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         $params[] = $filename;
                     }
                 }
-                
+
                 $insertQuery .= ")";
                 $stmt = $conn->prepare($insertQuery);
                 $stmt->execute($params);
             }
-            
+
             // Handle layanan and acara data
             if (!empty($layananIds) && $acaraId) {
                 // Get general values for this submission that will be applied to each layanan record
@@ -453,7 +453,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 // $hasilPemeriksaan is already defined from form input (e.g., sanitizeInput($_POST['hasil_pemeriksaan'] ?? ''))
 
                 // Determine foto_kegiatan to save, considering uploads, deletions, and existing photos in edit mode
-                $fotoKegiatanToSave = null; 
+                $fotoKegiatanToSave = null;
                 if (isset($_POST['hapus_foto_kegiatan']) && $_POST['hapus_foto_kegiatan'] === '1') {
                     // If marked for deletion, find current photo to delete physical file
                     $currentFotoDataForDelete = fetchRow(
@@ -479,11 +479,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     // If there was an old photo associated with this NIK/Acara (stored in session during upload process),
                     // and a new one is uploaded, delete the old physical file.
                     if (isset($_SESSION['old_foto_kegiatan']) && $_SESSION['old_foto_kegiatan'] !== $fotoKegiatanToSave) {
-                         $oldFotoPathOnNewUpload = __DIR__ . '/assets/uploads/dokumentasi/' . basename($_SESSION['old_foto_kegiatan']);
-                         if (file_exists($oldFotoPathOnNewUpload)) {
+                        $oldFotoPathOnNewUpload = __DIR__ . '/assets/uploads/dokumentasi/' . basename($_SESSION['old_foto_kegiatan']);
+                        if (file_exists($oldFotoPathOnNewUpload)) {
                             if (unlink($oldFotoPathOnNewUpload)) error_log("Deleted old foto_kegiatan upon new upload: {$oldFotoPathOnNewUpload}");
                             else error_log("Failed to delete old foto_kegiatan upon new upload: {$oldFotoPathOnNewUpload}");
-                         }
+                        }
                     }
                     unset($_SESSION['old_foto_kegiatan']); // Clean up session variable
                 } elseif ($editMode) {
@@ -530,12 +530,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                            (nik, acara_id, layanan_id, petugas, satker_id, foto_kegiatan, hasil_pemeriksaan) 
                                            VALUES (?, ?, ?, ?, ?, ?, ?)";
                     executeQuery($insertLayananQuery, [
-                        $nik, 
-                        $acaraId, 
+                        $nik,
+                        $acaraId,
                         $valid_layanan_id, // Crucial: use the validated layanan_id from the loop
-                        $petugasValue, 
-                        $satkerId, 
-                        $fotoKegiatanToSave, 
+                        $petugasValue,
+                        $satkerId,
+                        $fotoKegiatanToSave,
                         $hasilPemeriksaan
                     ]);
                 }
@@ -767,6 +767,9 @@ $satkerList = fetchRows("SELECT id, nama_satker FROM satker WHERE is_active = 1 
                         <i class="bi bi-box-arrow-right"></i>
                     </a>
                 <?php else: ?>
+                    <a href="dashboard.php" class="floating-admin-btn floating-dashboard-btn" title="Lihat Dashboard" style="right: 75px;">
+                        <i class="bi bi-speedometer2"></i>
+                    </a>
                     <a href="login.php" class="floating-admin-btn" title="Login Admin">
                         <i class="bi bi-lock"></i>
                     </a>
@@ -801,9 +804,9 @@ $satkerList = fetchRows("SELECT id, nama_satker FROM satker WHERE is_active = 1 
                             <label for="acaraId" class="form-label">Pilih Acara <span class="text-danger">*</span></label>
                             <select class="form-select <?php echo isset($errors['acara_id']) ? 'is-invalid' : ''; ?>" id="acaraId" name="acara_id" required data-last-selected="">
                                 <option value="">-- Pilih Acara --</option>
-                                <?php 
+                                <?php
                                 $lastAcaraId = isset($_COOKIE['yankesdokpol_last_acara_id']) ? (int)$_COOKIE['yankesdokpol_last_acara_id'] : 0;
-                                foreach ($eventList as $event): 
+                                foreach ($eventList as $event):
                                     $isSelected = false;
                                     if ($editMode && isset($existingData['acara_id']) && $existingData['acara_id'] == $event['id']) {
                                         $isSelected = true;
@@ -1084,7 +1087,7 @@ $satkerList = fetchRows("SELECT id, nama_satker FROM satker WHERE is_active = 1 
                 if (orientationMsg) {
                     if (!isLandscape()) {
                         orientationMsg.classList.add('bg-danger');
-                        orientationMsg.innerHTML = '<small><i class="bi bi-exclamation-triangle-fill"></i> Putar perangkat ke posisi landscape</small>';
+                        orientationMsg.innerHTML = '<small><i class="bi bi-exclamation-triangle-fill"></i>Posisikan KTP memenuhi ruang kamera</small>';
                     } else {
                         orientationMsg.classList.remove('bg-danger');
                         orientationMsg.innerHTML = '<small><i class="bi bi-info-circle"></i> Perangkat dalam posisi landscape</small>';
@@ -1099,21 +1102,25 @@ $satkerList = fetchRows("SELECT id, nama_satker FROM satker WHERE is_active = 1 
             takePhotoBtn.addEventListener('click', async function() {
                 try {
                     // Request landscape if possible
-                    const constraints = { 
-                        video: { 
+                    const constraints = {
+                        video: {
                             facingMode: 'environment', // Use back camera by default
-                            width: { ideal: 1920 },
-                            height: { ideal: 1080 }
+                            width: {
+                                ideal: 1920
+                            },
+                            height: {
+                                ideal: 1080
+                            }
                         },
-                        audio: false 
+                        audio: false
                     };
-                    
+
                     stream = await navigator.mediaDevices.getUserMedia(constraints);
                     cameraPreview.srcObject = stream;
                     cameraContainer.classList.remove('d-none');
                     takePhotoBtn.disabled = true;
                     chooseFileBtn.disabled = true;
-                    
+
                     // Check orientation after camera is initialized
                     checkOrientation();
                 } catch (err) {
@@ -1128,23 +1135,23 @@ $satkerList = fetchRows("SELECT id, nama_satker FROM satker WHERE is_active = 1 
                 canvas.width = cameraPreview.videoWidth;
                 canvas.height = cameraPreview.videoHeight;
                 context.drawImage(cameraPreview, 0, 0, canvas.width, canvas.height);
-                
+
                 // Check if the image is portrait and needs rotation
                 // Force landscape orientation if portrait
                 const processCtx = document.getElementById('processCanvas').getContext('2d');
                 let finalWidth = canvas.width;
                 let finalHeight = canvas.height;
-                
+
                 // If height > width (portrait orientation), rotate to landscape
                 if (canvas.height > canvas.width) {
                     // Swap dimensions for rotation
                     finalWidth = canvas.height;
                     finalHeight = canvas.width;
-                    
+
                     // Set canvas to new dimensions
                     processCtx.canvas.width = finalWidth;
                     processCtx.canvas.height = finalHeight;
-                    
+
                     // Translate and rotate to get landscape
                     processCtx.translate(finalWidth, 0);
                     processCtx.rotate(Math.PI / 2); // 90 degrees rotation
@@ -1155,22 +1162,24 @@ $satkerList = fetchRows("SELECT id, nama_satker FROM satker WHERE is_active = 1 
                     processCtx.canvas.height = finalHeight;
                     processCtx.drawImage(canvas, 0, 0);
                 }
-                
+
                 // Use the processed canvas for the blob
                 document.getElementById('processCanvas').toBlob(function(blob) {
-                    const file = new File([blob], 'ktp_capture_landscape.jpg', { type: 'image/jpeg' });
-                    
+                    const file = new File([blob], 'ktp_capture_landscape.jpg', {
+                        type: 'image/jpeg'
+                    });
+
                     // Create a DataTransfer object and add the file
                     const dataTransfer = new DataTransfer();
                     dataTransfer.items.add(file);
-                    
+
                     // Set the file input files
                     fileInput.files = dataTransfer.files;
-                    
+
                     // Show preview
                     ktpImage.src = URL.createObjectURL(file);
                     ktpPreview.classList.remove('d-none');
-                    
+
                     // Clean up
                     stopCamera();
                 }, 'image/jpeg', 0.9);
@@ -1196,7 +1205,7 @@ $satkerList = fetchRows("SELECT id, nama_satker FROM satker WHERE is_active = 1 
                 if (e.target.files && e.target.files[0]) {
                     const file = e.target.files[0];
                     const reader = new FileReader();
-                    
+
                     reader.onload = function(event) {
                         // Check if we need to rotate the uploaded image
                         const img = new Image();
@@ -1204,27 +1213,29 @@ $satkerList = fetchRows("SELECT id, nama_satker FROM satker WHERE is_active = 1 
                             // If image is in portrait orientation, rotate it
                             if (img.height > img.width) {
                                 const processCtx = document.getElementById('processCanvas').getContext('2d');
-                                
+
                                 // Set canvas dimensions for landscape orientation
                                 processCtx.canvas.width = img.height;
                                 processCtx.canvas.height = img.width;
-                                
+
                                 // Translate and rotate to get landscape
                                 processCtx.translate(img.height, 0);
                                 processCtx.rotate(Math.PI / 2); // 90 degrees rotation
                                 processCtx.drawImage(img, 0, 0);
-                                
+
                                 // Convert to blob and replace file
                                 document.getElementById('processCanvas').toBlob(function(blob) {
-                                    const rotatedFile = new File([blob], file.name, { type: 'image/jpeg' });
-                                    
+                                    const rotatedFile = new File([blob], file.name, {
+                                        type: 'image/jpeg'
+                                    });
+
                                     // Create a DataTransfer object and add the file
                                     const dataTransfer = new DataTransfer();
                                     dataTransfer.items.add(rotatedFile);
-                                    
+
                                     // Replace the file input
                                     fileInput.files = dataTransfer.files;
-                                    
+
                                     // Show rotated preview
                                     ktpImage.src = URL.createObjectURL(rotatedFile);
                                     ktpPreview.classList.remove('d-none');
@@ -1237,7 +1248,7 @@ $satkerList = fetchRows("SELECT id, nama_satker FROM satker WHERE is_active = 1 
                         };
                         img.src = event.target.result;
                     };
-                    
+
                     reader.readAsDataURL(file);
                 }
             });
@@ -1306,12 +1317,12 @@ $satkerList = fetchRows("SELECT id, nama_satker FROM satker WHERE is_active = 1 
                 if (petugasNama) {
                     addPetugasToList(petugasNama);
                 }
-                
+
                 // Simpan satker terakhir yang dipilih ke localStorage
                 if (satkerSelect && satkerSelect.value) {
                     localStorage.setItem('yankesdokpol_last_satker_id', satkerSelect.value);
                 }
-                
+
                 // Simpan acara terakhir yang dipilih ke cookie (expire 30 hari)
                 const acaraSelect = document.getElementById('acaraId');
                 if (acaraSelect && acaraSelect.value) {

@@ -22,24 +22,24 @@
 * [HTTP/2] [1] [:authority: api.ocr.space]
 * [HTTP/2] [1] [:path: /parse/image]
 * [HTTP/2] [1] [accept: */*]
-* [HTTP/2] [1] [content-length: 82543]
-* [HTTP/2] [1] [content-type: multipart/form-data; boundary=------------------------y7qz2LhiVwBYcMUa1ARj3D]
+* [HTTP/2] [1] [content-length: 98059]
+* [HTTP/2] [1] [content-type: multipart/form-data; boundary=------------------------U9VlE92ZEoRK6dlyQCqeGI]
 > POST /parse/image HTTP/2
 Host: api.ocr.space
 Accept: */*
-Content-Length: 82543
-Content-Type: multipart/form-data; boundary=------------------------y7qz2LhiVwBYcMUa1ARj3D
+Content-Length: 98059
+Content-Type: multipart/form-data; boundary=------------------------U9VlE92ZEoRK6dlyQCqeGI
 
-* upload completely sent off: 82543 bytes
+* upload completely sent off: 98059 bytes
 < HTTP/2 200 
 < cache-control: no-cache
 < pragma: no-cache
-< content-length: 800
+< content-length: 825
 < content-type: application/json; charset=utf-8
 < expires: -1
 < server: Microsoft-IIS/10.0
 < x-aspnet-version: 4.0.30319
 < x-powered-by: ASP.NET
-< date: Mon, 09 Jun 2025 04:34:48 GMT
+< date: Mon, 09 Jun 2025 05:07:18 GMT
 < 
 * Connection #0 to host api.ocr.space left intact

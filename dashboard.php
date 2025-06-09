@@ -18,11 +18,9 @@ require_once 'config/database.php';
 require_once 'includes/functions.php';
 require_once 'includes/auth.php';
 
-// Require login to access this page
-requireLogin();
-
-// Get current user data
-$currentUser = getCurrentUser();
+// Allow public access, login is not strictly required for dashboard view
+// $currentUser = getCurrentUser(); // Commented out or set to null if not needed for public view
+$currentUser = isset($_SESSION['user_id']) ? getCurrentUser() : null;
 
 // Page title
 $pageTitle = 'YankesDokpol - Dashboard';

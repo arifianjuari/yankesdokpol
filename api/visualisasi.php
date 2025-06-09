@@ -4,10 +4,11 @@ require_once '../config/database.php';
 require_once '../includes/functions.php';
 header('Content-Type: application/json');
 session_start();
-if (!isset($_SESSION['user_id'])) {
-    echo json_encode(['error' => 'Unauthorized']);
-    exit;
-}
+// Public access to visualization API
+// if (!isset($_SESSION['user_id'])) {
+//     echo json_encode(['error' => 'Unauthorized']);
+//     exit;
+// }
 
 // Ambil parameter filter
 $acara_id = isset($_GET['acara_id']) && $_GET['acara_id'] !== 'all' ? intval($_GET['acara_id']) : null;

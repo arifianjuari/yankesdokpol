@@ -1,20 +1,20 @@
-=== PROSES OCR KTP BARU: 2025-06-09 11:34:46 ===
+=== PROSES OCR KTP BARU: 2025-06-09 12:07:16 ===
 
-IMAGE PATH: /private/var/folders/9y/j8n3ttq94w34jf4q8lw2pxvr0000gn/T/phprs6sbtni9ul34Xh92un
+IMAGE PATH: /private/var/folders/9y/j8n3ttq94w34jf4q8lw2pxvr0000gn/T/php503887m3naeh4qxUeJL
 
 
-OCR API CALL START: 2025-06-09 11:34:46
-FILE INFO: Size=164897bytes, Type=image/jpeg
-Ukuran file setelah kompresi: 61194 bytes
-Gambar dikompres. Size baru=61194bytes
-Base64 encoding berhasil, panjang: 81592 karakter
+OCR API CALL START: 2025-06-09 12:07:16
+FILE INFO: Size=718327bytes, Type=image/jpeg
+Ukuran file setelah kompresi: 72830 bytes
+Gambar dikompres. Size baru=72830bytes
+Base64 encoding berhasil, panjang: 97108 karakter
 Data base64 siap dikirim
 Mengirim request ke OCR.space...
 Memory Usage: 2097152 bytes, Memory Limit: 512M
 HTTP Status: 200
 CURL ERROR: 
 RAW RESPONSE (first 500 chars):
-{"ParsedResults":[{"TextOverlay":{"Lines":[],"HasOverlay":false,"Message":"Text overlay is not provided as it is not requested"},"TextOrientation":"0","FileParseExitCode":1,"ParsedText":"PROVINSI JAWA TIMUR\nKOTA BLITAR\nNIK : 3572010705560003\nNama\n: SUGIARTO HIDAYAT\nTempat/Tgl Lahir : BLITAR, 07-05-1956\nJenis Kelamin\n: LAKI-LAKI\nAlamat\n: JL CEMARA 07\nRT/RW\n: 003 / 002\nKel/Desa\n: KEPANJENKIDUL\nKecamatan\n: KEPANJENKIDUL\nAgama\n: KATHOLIK\nStatus Perkawinan : KAWIN\nPekerjaan\n:PEDAG
+{"ParsedResults":[{"TextOverlay":{"Lines":[],"HasOverlay":false,"Message":"Text overlay is not provided as it is not requested"},"TextOrientation":"0","FileParseExitCode":1,"ParsedText":"NIK\nPROVINSI KEPULAUAN BANGKA BELITUNG\nKOTA PANGKAL PINANG\n: 1971041603520001\nNama\n: IRYANTO HALIM\nTempat/Tgl Lahir\n: PALEMBANG, 16-03-1952\nJenis Kelamin\n: LAKI-LAKI\nGol. Darah : O\nAlamat\n: JL. MANDALA NO. 29\nRT/RW\n: 007 / 002\nKel/Desa\n: MELINTANG\nKecamatan\n: RANGKUI\nAgama\n: KATHOLIK\nStatus 
 JSON Parse success. Structure: Array
 (
     [0] => ParsedResults
@@ -25,72 +25,94 @@ JSON Parse success. Structure: Array
 )
 
 PARSED TEXT:
-PROVINSI JAWA TIMUR
-KOTA BLITAR
-NIK : 3572010705560003
+NIK
+PROVINSI KEPULAUAN BANGKA BELITUNG
+KOTA PANGKAL PINANG
+: 1971041603520001
 Nama
-: SUGIARTO HIDAYAT
-Tempat/Tgl Lahir : BLITAR, 07-05-1956
+: IRYANTO HALIM
+Tempat/Tgl Lahir
+: PALEMBANG, 16-03-1952
 Jenis Kelamin
 : LAKI-LAKI
+Gol. Darah : O
 Alamat
-: JL CEMARA 07
+: JL. MANDALA NO. 29
 RT/RW
-: 003 / 002
+: 007 / 002
 Kel/Desa
-: KEPANJENKIDUL
+: MELINTANG
 Kecamatan
-: KEPANJENKIDUL
+: RANGKUI
 Agama
 : KATHOLIK
 Status Perkawinan : KAWIN
 Pekerjaan
-:PEDAGANG
+: DOKTER
 Kewarganegaraan: WNI
 Berlaku Hingga
-: 07-05-2017
-Gol. Darah : -
-KOTA BLITAR
-2-04-2012
-Clums
+: SEUMUR HIDUP
+KOTA PANGKAL
+PINANG
+25-01-2012
 === OCR TEXT MENTAH ===
-PROVINSI JAWA TIMUR
-KOTA BLITAR
-NIK : 3572010705560003
+NIK
+PROVINSI KEPULAUAN BANGKA BELITUNG
+KOTA PANGKAL PINANG
+: 1971041603520001
 Nama
-: SUGIARTO HIDAYAT
-Tempat/Tgl Lahir : BLITAR, 07-05-1956
+: IRYANTO HALIM
+Tempat/Tgl Lahir
+: PALEMBANG, 16-03-1952
 Jenis Kelamin
 : LAKI-LAKI
+Gol. Darah : O
 Alamat
-: JL CEMARA 07
+: JL. MANDALA NO. 29
 RT/RW
-: 003 / 002
+: 007 / 002
 Kel/Desa
-: KEPANJENKIDUL
+: MELINTANG
 Kecamatan
-: KEPANJENKIDUL
+: RANGKUI
 Agama
 : KATHOLIK
 Status Perkawinan : KAWIN
 Pekerjaan
-:PEDAGANG
+: DOKTER
 Kewarganegaraan: WNI
 Berlaku Hingga
-: 07-05-2017
-Gol. Darah : -
-KOTA BLITAR
-2-04-2012
-Clums
+: SEUMUR HIDUP
+KOTA PANGKAL
+PINANG
+25-01-2012
 
-Hasil ekstrak NIK: 3572010705560003
-Hasil ekstrak Nama: SUGIARTO HIDAYAT
-Hasil ekstrak Alamat: JL CEMARA 07
+Hasil ekstrak NIK: 1971041603520001
+Hasil ekstrak Nama: IRYANTO HALIM
+Hasil ekstrak Alamat: JL. MANDALA NO. 29
 Mencoba ekstrak tanggal lahir dari OCR text...
-Format KTP ditemukan: 1956-05-07
-Hasil ekstrak Tanggal Lahir: 1956-05-07
+Format KTP ditemukan: 1952-03-16
+Hasil ekstrak Tanggal Lahir: 1952-03-16
 
-OCR Results: {"nik":"3572010705560003","nama":"SUGIARTO HIDAYAT","alamat":"JL CEMARA 07","tanggal_lahir":"1956-05-07","errors":[],"success":true}
+OCR Results: {"nik":"1971041603520001","nama":"IRYANTO HALIM","alamat":"JL. MANDALA NO. 29","tanggal_lahir":"1952-03-16","errors":[],"success":true}
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
 PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
 
 PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
