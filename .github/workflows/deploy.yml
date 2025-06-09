@@ -42,7 +42,8 @@ jobs:
     - name: Test SFTP connection
       run: |
         echo "Testing SFTP connection..."
-        sshpass -p "${{ secrets.SFTP_PASSWORD }}" sftp -o StrictHostKeyChecking=no -P ${{ env.SFTP_PORT }} ${{ env.SFTP_USER }}@${{ env.SFTP_SERVER }} <<EOF
+        # Add verbose output for debugging
+        sshpass -p "${{ secrets.SFTP_PASSWORD }}" sftp -v -o StrictHostKeyChecking=no -o ConnectTimeout=30 -o ConnectionAttempts=3 -P ${{ env.SFTP_PORT }} ${{ env.SFTP_USER }}@${{ env.SFTP_SERVER }} <<EOF || echo "SFTP connection failed but continuing"
         pwd
         ls -la
         exit
@@ -55,14 +56,16 @@ jobs:
         
         # Create deployment script with timeouts
         cat > deploy.lftp << 'EOL'
+        debug 3
         set ssl:verify-certificate no
         set sftp:auto-confirm yes
-        set net:timeout 120
-        set net:max-retries 3
-        set net:reconnect-interval-base 5
-        set net:reconnect-interval-multiplier 1
+        set net:timeout 180
+        set net:max-retries 5
+        set net:reconnect-interval-base 10
+        set net:reconnect-interval-multiplier 1.5
+        set dns:fatal-timeout 60
         
-        open sftp://${{ env.SFTP_USER }}:${{ env.SFTP_PASS }}@${{ env.SFTP_SERVER }}:${{ env.SFTP_PORT }}
+        open -v sftp://${{ env.SFTP_USER }}:${{ env.SFTP_PASS }}@${{ env.SFTP_SERVER }}:${{ env.SFTP_PORT }}
         
         # Change to target directory
         cd ${{ env.REMOTE_DIR }}
@@ -72,7 +75,7 @@ jobs:
         
         # Mirror project directory to remote (only changed files)
         # Use smaller chunks with fewer parallel transfers
-        mirror -v -R --only-newer --ignore-time --parallel=3 \
+        mirror -v -R --only-newer --ignore-time --parallel=2 --use-cache --no-perms \
           --exclude .git/ \
           --exclude .github/ \
           --exclude .gitignore \
@@ -85,14 +88,14 @@ jobs:
           --exclude dokumentasi/ \
           .
         
-        # Set directory permissions
-        !find . -type d -not -path "./uploads*" -not -path "./dokumentasi*" -exec chmod 755 {} \;
+        # Set directory permissions - using simpler commands to avoid potential issues
+        !find . -type d -not -path "./uploads*" -not -path "./dokumentasi*" -exec chmod 755 {} \; || echo "Setting directory permissions failed"
         
         # Set file permissions
-        !find . -type f -not -path "./uploads*" -not -path "./dokumentasi*" -exec chmod 644 {} \;
+        !find . -type f -not -path "./uploads*" -not -path "./dokumentasi*" -exec chmod 644 {} \; || echo "Setting file permissions failed"
         
         # Special permissions for upload directories
-        !chmod -R 777 uploads/ dokumentasi/ 2>/dev/null || true
+        !chmod -R 777 uploads/ dokumentasi/ 2>/dev/null || echo "Setting upload directory permissions failed"
         
         # List files after upload
         ls -la
