@@ -50,8 +50,8 @@ jobs:
         # Change to target directory
         cd ${{ env.REMOTE_DIR }}
         
-        # Mirror project directory to remote
-        mirror -v -R --delete --parallel=5 \
+        # Mirror project directory to remote (only changed files)
+        mirror -v -R --only-newer --parallel=5 \
           --exclude .git/ \
           --exclude .github/ \
           --exclude .gitignore \
@@ -60,6 +60,8 @@ jobs:
           --exclude vendor/ \
           --exclude sshkey* \
           --exclude assets/uploads/ \
+          --exclude uploads/ \
+          --exclude dokumentasi/ \
           .
         
         # Set permissions
