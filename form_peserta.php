@@ -674,6 +674,7 @@ $satkerList = fetchRows("SELECT id, nama_satker FROM satker WHERE is_active = 1 
 ?>
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -930,7 +931,7 @@ $satkerList = fetchRows("SELECT id, nama_satker FROM satker WHERE is_active = 1 
                                 <div class="mb-3">
                                     <label for="nik" class="form-label">NIK</label>
                                     <input type="text" class="form-control" id="nik" name="nik" maxlength="16" value="<?php echo $editMode ? htmlspecialchars($existingData['nik'] ?? '') : ''; ?>" <?php echo $editMode ? 'readonly' : ''; ?>>
-                                    <div class="form-text">Opsional. Jika kosong, NIK akan dibuat otomatis dari tanggal hari ini dan tanggal lahir.</div>
+
                                 </div>
                             </div>
                             <div class="col-md-6">
@@ -1063,8 +1064,8 @@ $satkerList = fetchRows("SELECT id, nama_satker FROM satker WHERE is_active = 1 
     </div> <!-- Closing main-content-admin wrapper -->
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="assets/js/script.js"></script>
     <script src="assets/js/pwa.js"></script>
+    <script src="assets/js/script.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const fileInput = document.getElementById('fileKTP');
@@ -1270,7 +1271,6 @@ $satkerList = fetchRows("SELECT id, nama_satker FROM satker WHERE is_active = 1 
         });
     </script>
 
-    <?php include 'includes/pwa_install_button.php'; ?>
     <script>
         // Fungsi untuk mengelola daftar petugas di localStorage
         document.addEventListener('DOMContentLoaded', function() {
@@ -1489,6 +1489,7 @@ $satkerList = fetchRows("SELECT id, nama_satker FROM satker WHERE is_active = 1 
             });
         });
     </script>
+    <?php include 'includes/pwa_install_button.php'; ?>
 </body>
 
 </html>

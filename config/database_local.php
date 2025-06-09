@@ -1,9 +1,8 @@
 <?php
 /**
- * Database Configuration File
+ * Local Database Configuration File
  * 
- * This file contains the database connection settings for the HUT Bhayangkara 79 application.
- * With optimized persistent connection management to avoid max_connections_per_hour limits.
+ * This file contains the database connection settings for local development.
  * 
  * @package HUTBhayangkara79
  * @version 1.1
@@ -16,10 +15,12 @@ require_once __DIR__ . '/app_config.php';
 class DatabaseConnection {
     private static $instance = null;
     private $connection = null;
-    private $host = 'auth-db1151.hstgr.io';
-    private $username = 'u609399718_yankesdokpol';
-    private $password = 'Juari@2591';
-    private $database = 'u609399718_yankesdokpol';
+    
+    // Local database credentials
+    private $host = 'localhost';
+    private $username = 'root';
+    private $password = '';  // Sesuaikan dengan password MySQL lokal Anda
+    private $database = 'yankesdokpol_local'; // Buat database ini di MySQL lokal
     
     // Private constructor for singleton pattern
     private function __construct() {
@@ -41,24 +42,15 @@ class DatabaseConnection {
         $retryDelay = 2; // seconds
         
         try {
-            // Set default socket timeout to be longer
-            $defaultTimeout = ini_get('default_socket_timeout');
-            ini_set('default_socket_timeout', 60); // 60 seconds timeout
-            
             // Create mysqli object without connecting
             $this->connection = mysqli_init();
             
             // Set connection options
-            $this->connection->options(MYSQLI_OPT_CONNECT_TIMEOUT, 20); // 20 seconds
-            $this->connection->options(MYSQLI_OPT_READ_TIMEOUT, 60);    // 60 seconds
-            $this->connection->options(MYSQLI_CLIENT_COMPRESS, true);   // Use compression
+            $this->connection->options(MYSQLI_OPT_CONNECT_TIMEOUT, 10);
             $this->connection->options(MYSQLI_SET_CHARSET_NAME, 'utf8mb4');
             
-            // Try to connect with persistent connection
-            $connected = @$this->connection->real_connect('p:' . $this->host, $this->username, $this->password, $this->database);
-            
-            // Restore default timeout
-            ini_set('default_socket_timeout', $defaultTimeout);
+            // Try to connect
+            $connected = @$this->connection->real_connect($this->host, $this->username, $this->password, $this->database);
             
             // Check connection
             if (!$connected) {
@@ -66,7 +58,7 @@ class DatabaseConnection {
                 $errorNo = $this->connection->connect_errno;
                 
                 // Log detailed error
-                error_log("Database connection failed (Attempt {$retryCount}): Error #{$errorNo}: {$errorMsg}");
+                error_log("Local database connection failed (Attempt {$retryCount}): Error #{$errorNo}: {$errorMsg}");
                 
                 // Retry logic
                 if ($retryCount < $maxRetries) {
@@ -83,14 +75,12 @@ class DatabaseConnection {
             $this->connection->set_charset("utf8mb4");
             $this->connection->query("SET time_zone = '+07:00'");
             $this->connection->query("SET SESSION sql_mode = 'STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION'");
-            $this->connection->query("SET SESSION wait_timeout=300"); // 5 minutes wait timeout
-            $this->connection->query("SET SESSION interactive_timeout=300"); // 5 minutes interactive timeout
             
             return true;
             
         } catch (Exception $e) {
             error_log("Critical database error: " . $e->getMessage());
-            die("<h3>Maaf, terjadi gangguan koneksi database.</h3><p>Tim teknis kami sudah diberitahu. Silakan coba beberapa saat lagi.</p>");
+            die("<h3>Maaf, terjadi gangguan koneksi database lokal.</h3><p>Pastikan MySQL lokal Anda berjalan dan database telah dibuat.</p>");
         }
     }
     
@@ -136,25 +126,9 @@ $conn = DatabaseConnection::getInstance()->getConnection();
 // Register shutdown function to handle connection cleanup
 register_shutdown_function(function() {
     // Cleanup is handled by PHP for persistent connections
-    // This function is here for potential future cleanup needs
 });
 
-// Set timezone to GMT+7 (Western Indonesian Time)
-$conn->query("SET time_zone = '+07:00'");
-$conn->query("SET @@session.time_zone = '+07:00'");
-
-// Set PHP timezone
-if (function_exists('date_default_timezone_set')) {
-    date_default_timezone_set('Asia/Jakarta');
-}
-
-/**
- * Helper function to execute queries
- * 
- * @param string $sql SQL query to execute
- * @param array $params Optional parameters for prepared statement
- * @return mysqli_result|bool Result object or boolean
- */
+// Helper function to execute queries with improved error handling and connection management
 function executeQuery($sql, $params = []) {
     global $conn;
     
@@ -224,13 +198,7 @@ function executeQuery($sql, $params = []) {
     }
 }
 
-/**
- * Helper function to get a single row with improved handling
- * 
- * @param string|mysqli_result $sql SQL query to execute or mysqli_result object
- * @param array $params Optional parameters for prepared statement
- * @return array|null Result row as associative array or null
- */
+// Helper function to get a single row with improved handling
 function fetchRow($sql, $params = []) {
     $result = executeQuery($sql, $params);
     
@@ -253,13 +221,7 @@ function fetchRow($sql, $params = []) {
     return null;
 }
 
-/**
- * Helper function to get multiple rows with improved handling
- * 
- * @param string|mysqli_result $sql SQL query to execute or mysqli_result object
- * @param array $params Optional parameters for prepared statement
- * @return array Result rows as associative arrays
- */
+// Helper function to get multiple rows with improved handling
 function fetchRows($sql, $params = []) {
     $rows = [];
     $result = executeQuery($sql, $params);
@@ -280,12 +242,7 @@ function fetchRows($sql, $params = []) {
     return $rows;
 }
 
-/**
- * Helper function to escape strings for SQL queries with improved handling
- * 
- * @param string $value Value to escape
- * @return string Escaped value
- */
+// Helper function to escape strings for SQL queries with improved handling
 function escapeString($value) {
     global $conn;
     
@@ -296,3 +253,4 @@ function escapeString($value) {
     
     return $conn->real_escape_string($value);
 }
+?>
