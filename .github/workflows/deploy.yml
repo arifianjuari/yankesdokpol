@@ -13,46 +13,35 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v3
 
-    - name: Setup SSH
-      uses: webfactory/ssh-agent@v0.7.0
-      with:
-        ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
-
-    - name: Debug SSH
-      run: |
-        echo "SSH_AUTH_SOCK: $SSH_AUTH_SOCK"
-        ls -la ~/.ssh
-        ssh-add -l
-        ssh -v -o StrictHostKeyChecking=no ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }} "echo 'SSH connection successful'"
-
-    - name: Add known hosts
+    - name: Setup SSH key
       run: |
         mkdir -p ~/.ssh
-        chmod 700 ~/.ssh
+        echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_ed25519
+        chmod 600 ~/.ssh/id_ed25519
+        eval "$(ssh-agent -s)"
+        ssh-add ~/.ssh/id_ed25519
         ssh-keyscan -H ${{ secrets.REMOTE_HOST }} >> ~/.ssh/known_hosts
-        chmod 600 ~/.ssh/known_hosts
+        chmod 644 ~/.ssh/known_hosts
 
-    - name: Install rsync and sshpass
+    - name: Test SSH connection
       run: |
-        sudo apt-get update
-        sudo apt-get install -y rsync sshpass
+        ssh -v -o BatchMode=yes -o StrictHostKeyChecking=no ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }} "echo 'SSH connection successful'"
+
+    - name: Install rsync
+      run: sudo apt-get update && sudo apt-get install -y rsync
 
     - name: Deploy to VPS
       env:
         REMOTE_DIR: ${{ secrets.REMOTE_DIR || '/var/www/html/yankesdokpol' }}
         REMOTE_USER: ${{ secrets.REMOTE_USER || 'root' }}
         REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
-        SSHPASS: ${{ secrets.VPS_PASSWORD }}
       run: |
-        # Test connection first
-        sshpass -e ssh -o StrictHostKeyChecking=no $REMOTE_USER@$REMOTE_HOST "echo 'Connection successful'"
-        
         # Create necessary directories
-        sshpass -e ssh -o StrictHostKeyChecking=no $REMOTE_USER@$REMOTE_HOST \
+        ssh -o BatchMode=yes -o StrictHostKeyChecking=no $REMOTE_USER@$REMOTE_HOST \
           "mkdir -p $REMOTE_DIR $REMOTE_DIR/uploads $REMOTE_DIR/dokumentasi"
         
         # Deploy using rsync
-        sshpass -e rsync -avz --delete \
+        rsync -avz --delete \
           --exclude='.git' \
           --exclude='.github' \
           --exclude='.gitignore' \
@@ -63,12 +52,12 @@ jobs:
           --exclude='assets/uploads' \
           --exclude='uploads' \
           --exclude='dokumentasi' \
-          -e "ssh -o StrictHostKeyChecking=no" \
+          -e "ssh -o BatchMode=yes -o StrictHostKeyChecking=no" \
           ./ \
           $REMOTE_USER@$REMOTE_HOST:$REMOTE_DIR/
 
         # Set permissions
-        sshpass -e ssh -o StrictHostKeyChecking=no $REMOTE_USER@$REMOTE_HOST "
+        ssh -o BatchMode=yes -o StrictHostKeyChecking=no $REMOTE_USER@$REMOTE_HOST "
           chown -R www-data:www-data $REMOTE_DIR
           find $REMOTE_DIR -type d -not -path \"$REMOTE_DIR/uploads*\" -not -path \"$REMOTE_DIR/dokumentasi*\" -exec chmod 755 {} \;
           find $REMOTE_DIR -type f -not -path \"$REMOTE_DIR/uploads*\" -not -path \"$REMOTE_DIR/dokumentasi*\" -exec chmod 644 {} \;
