@@ -4,7 +4,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Inisialisasi variabel chart global
     let charts = {
-        layanan: null,
         totalPeserta: null,
         pesertaPemeriksaan: null,
         usia: null,
@@ -263,12 +262,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     visualisasiDebug.textContent = '';
                 }
 
-                // Update chart layanan
-                if (data.layanan?.length) {
-                    const labels = data.layanan.map(i => i.nama);
-                    const counts = data.layanan.map(i => parseInt(i.jumlah) || 0);
-                    charts.layanan = updatePieChart('chart-layanan', labels, counts);
-                }
+                // Chart layanan dihapus
 
                 // Update chart total peserta
                 if (data.totalPeserta?.length) {

@@ -114,20 +114,7 @@
         </div>
     </div>
 
-    <!-- Baris 2: Distribusi Jenis Layanan dan Top 10 SATKER -->
-    <div class="col-md-6 mb-4">
-        <div class="card h-100">
-            <div class="card-header">
-                <h6 class="mb-0">Distribusi Jenis Layanan</h6>
-            </div>
-            <div class="card-body">
-                <div class="chart-container">
-                    <canvas id="chart-layanan"></canvas>
-                </div>
-                <div class="text-center mt-2 text-muted small" id="no-data-layanan" style="display:none">Tidak ada data layanan</div>
-            </div>
-        </div>
-    </div>
+    <!-- Baris 2: Top 10 SATKER -->
     <div class="col-md-6 mb-4">
         <div class="card h-100">
             <div class="card-header">
@@ -142,8 +129,8 @@
         </div>
     </div>
 
-    <!-- Baris 3: Distribusi Usia Peserta (full width) -->
-    <div class="col-12 mb-4">
+    <!-- Baris 3: Distribusi Usia Peserta -->
+    <div class="col-md-6 mb-4">
         <div class="card h-100">
             <div class="card-header">
                 <h6 class="mb-0">Distribusi Usia Peserta</h6>

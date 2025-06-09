@@ -645,13 +645,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
 
             // Redirect to prevent form resubmission
-            if ($existingParticipant && isset($_POST['update_existing'])) {
-                // After update, redirect back to the participant list
-                header('Location: daftar_peserta.php');
-            } else {
-                // After new registration, stay on the form
-                header('Location: form_peserta.php');
+            // Always redirect back to the form with the same parameters
+            $redirectUrl = 'form_peserta.php';
+            if ($editMode && !empty($nikToEdit)) {
+                $redirectUrl .= '?nik=' . urlencode($nikToEdit);
+                if (!empty($acaraId)) {
+                    $redirectUrl .= '&acara_id=' . $acaraId;
+                }
             }
+            header('Location: ' . $redirectUrl);
             exit;
         } catch (Exception $e) {
             // Rollback transaction on error

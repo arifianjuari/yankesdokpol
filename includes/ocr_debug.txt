@@ -1,20 +1,20 @@
-=== PROSES OCR KTP BARU: 2025-06-09 12:07:16 ===
+=== PROSES OCR KTP BARU: 2025-06-09 13:19:27 ===
 
-IMAGE PATH: /private/var/folders/9y/j8n3ttq94w34jf4q8lw2pxvr0000gn/T/php503887m3naeh4qxUeJL
+IMAGE PATH: /private/var/folders/9y/j8n3ttq94w34jf4q8lw2pxvr0000gn/T/phpkimsgpf9uo4ld64d6kh
 
 
-OCR API CALL START: 2025-06-09 12:07:16
-FILE INFO: Size=718327bytes, Type=image/jpeg
-Ukuran file setelah kompresi: 72830 bytes
-Gambar dikompres. Size baru=72830bytes
-Base64 encoding berhasil, panjang: 97108 karakter
+OCR API CALL START: 2025-06-09 13:19:27
+FILE INFO: Size=151951bytes, Type=image/jpeg
+Ukuran file setelah kompresi: 53270 bytes
+Gambar dikompres. Size baru=53270bytes
+Base64 encoding berhasil, panjang: 71028 karakter
 Data base64 siap dikirim
 Mengirim request ke OCR.space...
 Memory Usage: 2097152 bytes, Memory Limit: 512M
 HTTP Status: 200
 CURL ERROR: 
 RAW RESPONSE (first 500 chars):
-{"ParsedResults":[{"TextOverlay":{"Lines":[],"HasOverlay":false,"Message":"Text overlay is not provided as it is not requested"},"TextOrientation":"0","FileParseExitCode":1,"ParsedText":"NIK\nPROVINSI KEPULAUAN BANGKA BELITUNG\nKOTA PANGKAL PINANG\n: 1971041603520001\nNama\n: IRYANTO HALIM\nTempat/Tgl Lahir\n: PALEMBANG, 16-03-1952\nJenis Kelamin\n: LAKI-LAKI\nGol. Darah : O\nAlamat\n: JL. MANDALA NO. 29\nRT/RW\n: 007 / 002\nKel/Desa\n: MELINTANG\nKecamatan\n: RANGKUI\nAgama\n: KATHOLIK\nStatus 
+{"ParsedResults":[{"TextOverlay":{"Lines":[],"HasOverlay":false,"Message":"Text overlay is not provided as it is not requested"},"TextOrientation":"0","FileParseExitCode":1,"ParsedText":"NIK\nPROVINSI JAWA TIMUR\nKOTA BLITAR\n: 3572016610860008\nNama\n: EVELYN CHRISTINA\nTempat/Tgl Lahir\nJenis Kelamin\n: BUTAR, 26-10-1986\n: PEREMPUAN\nAlamat\n: JL CEMARA 07\nRT/RW\n: 003 / 002\nKel/Desa\n: KEPANJENKIDUL\nKecamatan\n: KEPANJENKIDUL\nAgama\n: KATHOLIK\nStatus Perkawinan : BELUM KAWIN\nPekerjaan\
 JSON Parse success. Structure: Array
 (
     [0] => ParsedResults
@@ -26,75 +26,557 @@ JSON Parse success. Structure: Array
 
 PARSED TEXT:
 NIK
-PROVINSI KEPULAUAN BANGKA BELITUNG
-KOTA PANGKAL PINANG
-: 1971041603520001
+PROVINSI JAWA TIMUR
+KOTA BLITAR
+: 3572016610860008
 Nama
-: IRYANTO HALIM
+: EVELYN CHRISTINA
 Tempat/Tgl Lahir
-: PALEMBANG, 16-03-1952
 Jenis Kelamin
-: LAKI-LAKI
-Gol. Darah : O
+: BUTAR, 26-10-1986
+: PEREMPUAN
 Alamat
-: JL. MANDALA NO. 29
+: JL CEMARA 07
 RT/RW
-: 007 / 002
+: 003 / 002
 Kel/Desa
-: MELINTANG
+: KEPANJENKIDUL
 Kecamatan
-: RANGKUI
+: KEPANJENKIDUL
 Agama
 : KATHOLIK
-Status Perkawinan : KAWIN
+Status Perkawinan : BELUM KAWIN
 Pekerjaan
 : DOKTER
 Kewarganegaraan: WNI
 Berlaku Hingga
-: SEUMUR HIDUP
-KOTA PANGKAL
-PINANG
-25-01-2012
+: 26-10-2017
+Gol. Darah : O
+KOTA BLITAR
+02-04-2012
 === OCR TEXT MENTAH ===
 NIK
-PROVINSI KEPULAUAN BANGKA BELITUNG
-KOTA PANGKAL PINANG
-: 1971041603520001
+PROVINSI JAWA TIMUR
+KOTA BLITAR
+: 3572016610860008
 Nama
-: IRYANTO HALIM
+: EVELYN CHRISTINA
 Tempat/Tgl Lahir
-: PALEMBANG, 16-03-1952
 Jenis Kelamin
-: LAKI-LAKI
-Gol. Darah : O
+: BUTAR, 26-10-1986
+: PEREMPUAN
 Alamat
-: JL. MANDALA NO. 29
+: JL CEMARA 07
 RT/RW
-: 007 / 002
+: 003 / 002
 Kel/Desa
-: MELINTANG
+: KEPANJENKIDUL
 Kecamatan
-: RANGKUI
+: KEPANJENKIDUL
 Agama
 : KATHOLIK
-Status Perkawinan : KAWIN
+Status Perkawinan : BELUM KAWIN
 Pekerjaan
 : DOKTER
 Kewarganegaraan: WNI
 Berlaku Hingga
-: SEUMUR HIDUP
-KOTA PANGKAL
-PINANG
-25-01-2012
+: 26-10-2017
+Gol. Darah : O
+KOTA BLITAR
+02-04-2012
 
-Hasil ekstrak NIK: 1971041603520001
-Hasil ekstrak Nama: IRYANTO HALIM
-Hasil ekstrak Alamat: JL. MANDALA NO. 29
+Hasil ekstrak NIK: 3572016610860008
+Hasil ekstrak Nama: EVELYN CHRISTINA
+Hasil ekstrak Alamat: JL CEMARA 07
 Mencoba ekstrak tanggal lahir dari OCR text...
-Format KTP ditemukan: 1952-03-16
-Hasil ekstrak Tanggal Lahir: 1952-03-16
+Format KTP ditemukan: 1986-10-26
+Hasil ekstrak Tanggal Lahir: 1986-10-26
 
-OCR Results: {"nik":"1971041603520001","nama":"IRYANTO HALIM","alamat":"JL. MANDALA NO. 29","tanggal_lahir":"1952-03-16","errors":[],"success":true}
+OCR Results: {"nik":"3572016610860008","nama":"EVELYN CHRISTINA","alamat":"JL CEMARA 07","tanggal_lahir":"1986-10-26","errors":[],"success":true}
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
+PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
+
 PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
 
 PHP Error Log Path: /Users/arifianjuari/.config/valet/Log/php-fpm.log
