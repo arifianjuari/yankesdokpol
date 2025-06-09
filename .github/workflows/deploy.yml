@@ -17,53 +17,18 @@ jobs:
         with:
           fetch-depth: 2  # Mengambil hanya 2 commit terakhir untuk mempercepat
 
-      - name: Deploy via FTP
-        # Back to SamKirkland's FTP action with proper configuration
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+      # Prepare deployment files by excluding what we don't want to upload
+      - name: Create deployment directory
+        run: |
+          mkdir -p ./deploy_folder
+          rsync -av --exclude='.git/' --exclude='node_modules/' --exclude='vendor/' --exclude='upload/' --exclude='uploads/' --exclude='.github/' --exclude='.DS_Store' --exclude='Thumbs.db' --exclude='.env' --exclude='.env.example' --exclude='.env.local' --exclude='README.md' --exclude='LICENSE' --exclude='composer.lock' --exclude='package-lock.json' --exclude='yarn.lock' --exclude='.vscode/' --exclude='.idea/' --exclude='logs/' --exclude='temp/' --exclude='tmp/' --exclude='cache/' --exclude='*.log' --exclude='*.bak' --exclude='*.swp' --exclude='*.sql' --exclude='*.zip' --exclude='*.tar' --exclude='*.gz' --exclude='*.rar' --exclude='sshkey' --exclude='*.psd' --exclude='*.ai' --exclude='*.sketch' ./ ./deploy_folder/
+
+      - name: Deploy to Hostinger
+        uses: sebastianpopp/ftp-action@releases/v2
         with:
-          # Shared hosting configuration
-          server: ${{ secrets.FTP_HOST }}
-          username: ${{ secrets.FTP_USERNAME }}
+          host: ${{ secrets.FTP_HOST }}
+          user: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
-          protocol: ftp
-          port: 21
-          local-dir: ./
-          server-dir: /public_html/yankesdokpol/
-          timeout: 60000
-          dangerous-clean-slate: false
-          # Exclude files and directories that shouldn't be deployed
-          exclude: |
-            **/.git*
-            **/.git*/**
-            **/node_modules/**
-            **/vendor/**
-            upload/**
-            **/uploads/**
-            **/.DS_Store
-            **/Thumbs.db
-            .env
-            .env.example
-            .env.local
-            README.md
-            LICENSE
-            composer.lock
-            package-lock.json
-            yarn.lock
-            .vscode/**
-            .idea/**
-            **/logs/**
-            **/temp/**
-            **/tmp/**
-            **/cache/**
-            **/*.log
-            **/*.bak
-            **/*.swp
-            **/*.sql
-            **/*.zip
-            **/*.tar
-            **/*.gz
-            **/*.rar
-            sshkey
-            **/*.psd
-            **/*.ai
-            **/*.sketch
+          localDir: "./deploy_folder"
+          remoteDir: "/public_html/yankesdokpol"
+          options: "--delete --ascii"
