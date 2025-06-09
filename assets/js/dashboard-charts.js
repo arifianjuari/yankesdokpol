@@ -294,11 +294,15 @@ document.addEventListener('DOMContentLoaded', function () {
                     document.getElementById('chart-usia').style.display = 'none';
                 }
 
-                // Update chart SATKER (now as pie chart)
+                // Update chart SATKER (as bar chart)
                 if (data.satker?.length) {
                     const labels = data.satker.map(i => i.nama);
                     const counts = data.satker.map(i => parseInt(i.jumlah) || 0);
-                    charts.satker = updatePieChart('chart-satker', labels, counts);
+                    charts.satker = updateBarChart('chart-satker', labels, counts, 'Jumlah Peserta', 'Jumlah Peserta');
+                    
+                    // Sembunyikan pesan tidak ada data
+                    document.getElementById('no-data-satker').style.display = 'none';
+                    document.getElementById('chart-satker').style.display = 'block';
                 } else {
                     document.getElementById('no-data-satker').style.display = 'block';
                     document.getElementById('chart-satker').style.display = 'none';

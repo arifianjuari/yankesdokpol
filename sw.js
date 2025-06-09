@@ -1,5 +1,5 @@
-// Service Worker for YankesDokpol PWA
-const CACHE_NAME = 'yankesdokpol-cache-v2';
+// Service Worker for HUT Bhayangkara 79 PWA
+const CACHE_NAME = 'hut-bhayangkara-79-cache-v3';
 
 // Assets to cache immediately (minimal set for offline functionality)
 const CORE_ASSETS = [
