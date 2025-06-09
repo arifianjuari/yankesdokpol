@@ -20,10 +20,44 @@ jobs:
       - name: Deploy via FTP
         uses: SamKirkland/FTP-Deploy-Action@4.3.0
         with:
-          server: ${{ secrets.FTP_HOST }}
+          server: ${{ secrets.FTP_SERVER }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           local-dir: ./
           server-dir: /public_html/yankesdokpol/
           exclude: |
-           
+            **/.git*
+            **/.git*/**
+            **/node_modules/**
+            **/vendor/**
+            upload/**
+            **/uploads/**
+            **/.DS_Store
+            **/Thumbs.db
+            .env
+            .env.example
+            .env.local
+            README.md
+            LICENSE
+            composer.lock
+            package-lock.json
+            yarn.lock
+            .vscode/**
+            .idea/**
+            **/logs/**
+            **/temp/**
+            **/tmp/**
+            **/cache/**
+            **/*.log
+            **/*.bak
+            **/*.swp
+            **/*.sql
+            **/*.zip
+            **/*.tar
+            **/*.gz
+            **/*.rar
+            sshkey
+            **/*.psd
+            **/*.ai
+            **/*.sketch
+            
