@@ -4,6 +4,13 @@ on:
   push:
     branches: [ main ]
 
+env:
+  SFTP_SERVER: 46.202.186.237
+  SFTP_PORT: 65002
+  SFTP_USER: u609399718
+  SFTP_PASS: ${{ secrets.SFTP_PASSWORD }}
+  REMOTE_DIR: /home/u609399718/domains/biddokkesjatim.org/public_html/yankesdokpol
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -14,10 +21,10 @@ jobs:
       with:
         fetch-depth: 0
     
-    - name: Install rsync
+    - name: Install lftp
       run: |
         sudo apt-get update
-        sudo apt-get install -y rsync
+        sudo apt-get install -y lftp
 
     - name: List files for debugging
       run: |
@@ -29,33 +36,43 @@ jobs:
         echo "\nSubdirectories:"
         find . -maxdepth 1 -type d | sort
 
-    - name: Deploy using rsync
+    - name: Deploy using LFTP
       run: |
         echo "Starting deployment..."
-        echo "Uploading files to server..."
         
-        # Upload all files except those in .gitignore
-        rsync -avz -e 'ssh -o StrictHostKeyChecking=no -p 65002' \
-          --exclude '.git/' \
-          --exclude '.github/' \
-          --exclude '.gitignore' \
-          --exclude '.env' \
-          --exclude 'node_modules/' \
-          --exclude 'vendor/' \
-          --exclude 'sshkey*' \
-          --delete \
-          ./ \
-          ${{ secrets.SFTP_USERNAME }}@46.202.186.237:/home/u609399718/domains/biddokkesjatim.org/public_html/yankesdokpol/
+        # Create deployment script
+        cat > deploy.lftp << 'EOL'
+        set ssl:verify-certificate no
+        set sftp:auto-confirm yes
         
-        echo "Setting permissions..."
-        ssh -o StrictHostKeyChecking=no -p 65002 ${{ secrets.SFTP_USERNAME }}@46.202.186.237 \
-          "cd /home/u609399718/domains/biddokkesjatim.org/public_html/yankesdokpol && \
-           find . -type d -exec chmod 755 {} \; && \
-           find . -type f -exec chmod 644 {} \; && \
-           chmod -R 777 uploads dokumentasi"
+        open sftp://${{ env.SFTP_USER }}:${{ env.SFTP_PASS }}@${{ env.SFTP_SERVER }}:${{ env.SFTP_PORT }}
         
-        echo "Verifying deployment..."
-        ssh -o StrictHostKeyChecking=no -p 65002 ${{ secrets.SFTP_USERNAME }}@46.202.186.237 \
-          "ls -la /home/u609399718/domains/biddokkesjatim.org/public_html/yankesdokpol"
+        # Change to target directory
+        cd ${{ env.REMOTE_DIR }}
+        
+        # Mirror local directory to remote
+        mirror -v -R --delete --parallel=5 \
+          --exclude .git/ \
+          --exclude .github/ \
+          --exclude .gitignore \
+          --exclude .env \
+          --exclude node_modules/ \
+          --exclude vendor/ \
+          --exclude sshkey* \
+          /
+        
+        # Set permissions
+        !find . -type d -exec chmod 755 {} \;
+        !find . -type f -exec chmod 644 {} \;
+        !chmod -R 777 uploads dokumentasi
+        
+        # List files after upload
+        ls -la
+        
+        bye
+        EOL
+        
+        # Execute the deployment
+        lftp -f deploy.lftp
         
         echo "Deployment completed successfully!"
