@@ -3,6 +3,8 @@ name: Deploy to Production
 on:
   push:
     branches: [ main ]
+  workflow_dispatch:
+    # Allow manual trigger
 
 env:
   SFTP_SERVER: 46.202.186.237
@@ -14,6 +16,7 @@ env:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     
     steps:
     - name: Checkout code
@@ -21,10 +24,10 @@ jobs:
       with:
         fetch-depth: 0
     
-    - name: Install lftp
+    - name: Install dependencies
       run: |
         sudo apt-get update
-        sudo apt-get install -y lftp
+        sudo apt-get install -y lftp sshpass
 
     - name: List files for debugging
       run: |
@@ -36,14 +39,28 @@ jobs:
         echo "\nSubdirectories:"
         find . -maxdepth 1 -type d | sort
 
+    - name: Test SFTP connection
+      run: |
+        echo "Testing SFTP connection..."
+        sshpass -p "${{ secrets.SFTP_PASSWORD }}" sftp -o StrictHostKeyChecking=no -P ${{ env.SFTP_PORT }} ${{ env.SFTP_USER }}@${{ env.SFTP_SERVER }} <<EOF
+        pwd
+        ls -la
+        exit
+        EOF
+        echo "SFTP connection test completed."
+
     - name: Deploy using LFTP
       run: |
         echo "Starting deployment..."
         
-        # Create deployment script
+        # Create deployment script with timeouts
         cat > deploy.lftp << 'EOL'
         set ssl:verify-certificate no
         set sftp:auto-confirm yes
+        set net:timeout 120
+        set net:max-retries 3
+        set net:reconnect-interval-base 5
+        set net:reconnect-interval-multiplier 1
         
         open sftp://${{ env.SFTP_USER }}:${{ env.SFTP_PASS }}@${{ env.SFTP_SERVER }}:${{ env.SFTP_PORT }}
         
@@ -54,7 +71,8 @@ jobs:
         !mkdir -p uploads dokumentasi
         
         # Mirror project directory to remote (only changed files)
-        mirror -v -R --only-newer --ignore-time --parallel=5 \
+        # Use smaller chunks with fewer parallel transfers
+        mirror -v -R --only-newer --ignore-time --parallel=3 \
           --exclude .git/ \
           --exclude .github/ \
           --exclude .gitignore \
@@ -82,7 +100,7 @@ jobs:
         bye
         EOL
         
-        # Execute the deployment
-        lftp -f deploy.lftp
+        # Execute the deployment with timeout
+        timeout 600 lftp -f deploy.lftp
         
         echo "Deployment completed successfully!"
