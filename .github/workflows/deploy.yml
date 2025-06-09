@@ -17,6 +17,13 @@ jobs:
       uses: webfactory/ssh-agent@v0.7.0
       with:
         ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+    
+        - name: Debug SSH
+        run: |
+          echo "SSH_AUTH_SOCK: $SSH_AUTH_SOCK"
+          ls -la ~/.ssh
+          ssh-add -l
+          ssh -v -o StrictHostKeyChecking=no ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }} "echo 'SSH connection successful'"
 
     - name: Add known hosts
       run: |
@@ -33,7 +40,9 @@ jobs:
         REMOTE_DIR: ${{ secrets.REMOTE_DIR || '/var/www/html/yankesdokpol' }}
         REMOTE_USER: ${{ secrets.REMOTE_USER || 'root' }}
         REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
+        SSHPASS: ${{ secrets.VPS_PASSWORD }}
       run: |
+       sshpass -e ssh -o StrictHostKeyChecking=no ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }} "echo 'Connection successful'"
         # Create necessary directories
         ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null \
           ${REMOTE_USER}@${REMOTE_HOST} \
