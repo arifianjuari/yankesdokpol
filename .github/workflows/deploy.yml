@@ -1,4 +1,4 @@
-name: Deploy ke Hostinger via FTP
+name: Deploy ke Hostinger via FTP/SFTP
 
 on:
   push:
@@ -17,47 +17,51 @@ jobs:
         with:
           fetch-depth: 2  # Mengambil hanya 2 commit terakhir untuk mempercepat
 
-      - name: Deploy via FTP
-        uses: SamKirkland/FTP-Deploy-Action@4.3.0
+      - name: Deploy via SFTP
+        # Using SFTP-Deploy-Action which supports SFTP for shared hosting
+        uses: wlixcc/SFTP-Deploy-Action@v1.2.4
         with:
-          server: ${{ secrets.FTP_SERVER }}
+          # Use your shared hosting server address
+          server: ${{ secrets.FTP_HOST }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
-          local-dir: ./
-          server-dir: /public_html/yankesdokpol/
-          exclude: |
-            **/.git*
-            **/.git*/**
-            **/node_modules/**
-            **/vendor/**
-            upload/**
-            **/uploads/**
-            **/.DS_Store
-            **/Thumbs.db
-            .env
-            .env.example
-            .env.local
-            README.md
-            LICENSE
-            composer.lock
-            package-lock.json
-            yarn.lock
-            .vscode/**
-            .idea/**
-            **/logs/**
-            **/temp/**
-            **/tmp/**
-            **/cache/**
-            **/*.log
-            **/*.bak
-            **/*.swp
-            **/*.sql
-            **/*.zip
-            **/*.tar
-            **/*.gz
-            **/*.rar
-            sshkey
-            **/*.psd
-            **/*.ai
-            **/*.sketch
-            
+          local_path: ./
+          remote_path: /public_html/yankesdokpol/
+          # Connection timeout settings
+          sftpArgs: '-o ConnectTimeout=30'
+          # Exclude files and directories that shouldn't be deployed
+          args: |
+            --exclude='.git*'
+            --exclude='.git*/**'
+            --exclude='node_modules/**'
+            --exclude='vendor/**'
+            --exclude='upload/**'
+            --exclude='uploads/**'
+            --exclude='.DS_Store'
+            --exclude='Thumbs.db'
+            --exclude='.env'
+            --exclude='.env.example'
+            --exclude='.env.local'
+            --exclude='README.md'
+            --exclude='LICENSE'
+            --exclude='composer.lock'
+            --exclude='package-lock.json'
+            --exclude='yarn.lock'
+            --exclude='.vscode/**'
+            --exclude='.idea/**'
+            --exclude='logs/**'
+            --exclude='temp/**'
+            --exclude='tmp/**'
+            --exclude='cache/**'
+            --exclude='*.log'
+            --exclude='*.bak'
+            --exclude='*.swp'
+            --exclude='*.sql'
+            --exclude='*.zip'
+            --exclude='*.tar'
+            --exclude='*.gz'
+            --exclude='*.rar'
+            --exclude='sshkey'
+            --exclude='*.psd'
+            --exclude='*.ai'
+            --exclude='*.sketch'
