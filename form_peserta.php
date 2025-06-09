@@ -872,8 +872,24 @@ $satkerList = fetchRows("SELECT id, nama_satker FROM satker WHERE is_active = 1 
                                 <h3 class="h5">Upload KTP untuk OCR</h3>
                                 <div class="mb-3">
                                     <label for="fileKTP" class="form-label">Foto KTP</label>
-                                    <input type="file" class="form-control" id="fileKTP" name="file_ktp" accept="image/*">
+                                    <div class="input-group mb-2">
+                                        <input type="file" class="form-control" id="fileKTP" name="file_ktp" accept="image/*" style="display: none;">
+                                        <button type="button" class="btn btn-outline-secondary" id="chooseFileBtn">
+                                            <i class="bi bi-upload"></i> Pilih File
+                                        </button>
+                                        <button type="button" class="btn btn-outline-primary" id="takePhotoBtn">
+                                            <i class="bi bi-camera"></i> Ambil Foto
+                                        </button>
+                                    </div>
                                     <div class="form-text">Upload foto KTP untuk mengisi data otomatis dengan OCR</div>
+                                    <div id="cameraContainer" class="mt-2 d-none">
+                                        <video id="cameraPreview" autoplay playsinline class="img-fluid border rounded"></video>
+                                        <div class="btn-group w-100 mt-2">
+                                            <button type="button" id="captureBtn" class="btn btn-primary">Ambil Foto</button>
+                                            <button type="button" id="cancelCaptureBtn" class="btn btn-secondary">Batal</button>
+                                        </div>
+                                    </div>
+                                    <canvas id="canvas" class="d-none"></canvas>
                                 </div>
                                 <button type="button" id="processOCR" class="btn btn-secondary mb-3">Proses OCR</button>
                             </div>
@@ -1034,6 +1050,111 @@ $satkerList = fetchRows("SELECT id, nama_satker FROM satker WHERE is_active = 1 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="assets/js/script.js"></script>
     <script src="assets/js/pwa.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const fileInput = document.getElementById('fileKTP');
+            const chooseFileBtn = document.getElementById('chooseFileBtn');
+            const takePhotoBtn = document.getElementById('takePhotoBtn');
+            const cameraContainer = document.getElementById('cameraContainer');
+            const cameraPreview = document.getElementById('cameraPreview');
+            const captureBtn = document.getElementById('captureBtn');
+            const cancelCaptureBtn = document.getElementById('cancelCaptureBtn');
+            const canvas = document.getElementById('canvas');
+            const ktpImage = document.getElementById('ktpImage');
+            const ktpPreview = document.getElementById('ktpPreview');
+            let stream = null;
+
+            // Handle file selection button
+            chooseFileBtn.addEventListener('click', function() {
+                fileInput.click();
+            });
+
+            // Handle take photo button
+            takePhotoBtn.addEventListener('click', async function() {
+                try {
+                    stream = await navigator.mediaDevices.getUserMedia({ 
+                        video: { 
+                            facingMode: 'environment', // Use back camera by default
+                            width: { ideal: 1920 },
+                            height: { ideal: 1080 }
+                        },
+                        audio: false 
+                    });
+                    cameraPreview.srcObject = stream;
+                    cameraContainer.classList.remove('d-none');
+                    takePhotoBtn.disabled = true;
+                    chooseFileBtn.disabled = true;
+                } catch (err) {
+                    console.error('Error accessing camera:', err);
+                    alert('Tidak dapat mengakses kamera. Pastikan Anda mengizinkan akses kamera.');
+                }
+            });
+
+            // Handle capture button
+            captureBtn.addEventListener('click', function() {
+                const context = canvas.getContext('2d');
+                canvas.width = cameraPreview.videoWidth;
+                canvas.height = cameraPreview.videoHeight;
+                context.drawImage(cameraPreview, 0, 0, canvas.width, canvas.height);
+                
+                // Convert canvas to blob and create a file
+                canvas.toBlob(function(blob) {
+                    const file = new File([blob], 'ktp_capture.jpg', { type: 'image/jpeg' });
+                    
+                    // Create a DataTransfer object and add the file
+                    const dataTransfer = new DataTransfer();
+                    dataTransfer.items.add(file);
+                    
+                    // Set the file input files
+                    fileInput.files = dataTransfer.files;
+                    
+                    // Show preview
+                    ktpImage.src = URL.createObjectURL(file);
+                    ktpPreview.classList.remove('d-none');
+                    
+                    // Clean up
+                    stopCamera();
+                }, 'image/jpeg', 0.9);
+            });
+
+            // Handle cancel capture button
+            cancelCaptureBtn.addEventListener('click', stopCamera);
+
+            // Stop camera and clean up
+            function stopCamera() {
+                if (stream) {
+                    stream.getTracks().forEach(track => track.stop());
+                    stream = null;
+                }
+                cameraPreview.srcObject = null;
+                cameraContainer.classList.add('d-none');
+                takePhotoBtn.disabled = false;
+                chooseFileBtn.disabled = false;
+            }
+
+            // Handle file input change
+            fileInput.addEventListener('change', function(e) {
+                if (e.target.files && e.target.files[0]) {
+                    const file = e.target.files[0];
+                    const reader = new FileReader();
+                    
+                    reader.onload = function(event) {
+                        ktpImage.src = event.target.result;
+                        ktpPreview.classList.remove('d-none');
+                    };
+                    
+                    reader.readAsDataURL(file);
+                }
+            });
+
+            // Clean up camera when leaving the page
+            window.addEventListener('beforeunload', function() {
+                if (stream) {
+                    stopCamera();
+                }
+            });
+        });
+    </script>
 
     <?php include 'includes/pwa_install_button.php'; ?>
     <script>
