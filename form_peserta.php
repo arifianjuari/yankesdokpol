@@ -883,13 +883,17 @@ $satkerList = fetchRows("SELECT id, nama_satker FROM satker WHERE is_active = 1 
                                     </div>
                                     <div class="form-text">Upload foto KTP untuk mengisi data otomatis dengan OCR</div>
                                     <div id="cameraContainer" class="mt-2 d-none">
-                                        <video id="cameraPreview" autoplay playsinline class="img-fluid border rounded"></video>
+                                        <div class="camera-overlay text-center py-1 bg-dark text-white mb-1 rounded">
+                                            <small><i class="bi bi-info-circle"></i> Harap arahkan perangkat dalam posisi landscape</small>
+                                        </div>
+                                        <video id="cameraPreview" autoplay playsinline class="img-fluid border rounded" style="max-height: 300px;"></video>
                                         <div class="btn-group w-100 mt-2">
                                             <button type="button" id="captureBtn" class="btn btn-primary">Ambil Foto</button>
                                             <button type="button" id="cancelCaptureBtn" class="btn btn-secondary">Batal</button>
                                         </div>
                                     </div>
                                     <canvas id="canvas" class="d-none"></canvas>
+                                    <canvas id="processCanvas" class="d-none"></canvas>
                                 </div>
                                 <button type="button" id="processOCR" class="btn btn-secondary mb-3">Proses OCR</button>
                             </div>
@@ -1069,21 +1073,49 @@ $satkerList = fetchRows("SELECT id, nama_satker FROM satker WHERE is_active = 1 
                 fileInput.click();
             });
 
+            // Check if device is in landscape orientation
+            function isLandscape() {
+                return window.innerWidth > window.innerHeight;
+            }
+
+            // Show orientation message
+            function checkOrientation() {
+                const orientationMsg = document.querySelector('.camera-overlay');
+                if (orientationMsg) {
+                    if (!isLandscape()) {
+                        orientationMsg.classList.add('bg-danger');
+                        orientationMsg.innerHTML = '<small><i class="bi bi-exclamation-triangle-fill"></i> Putar perangkat ke posisi landscape</small>';
+                    } else {
+                        orientationMsg.classList.remove('bg-danger');
+                        orientationMsg.innerHTML = '<small><i class="bi bi-info-circle"></i> Perangkat dalam posisi landscape</small>';
+                    }
+                }
+            }
+
+            // Listen for orientation changes
+            window.addEventListener('resize', checkOrientation);
+
             // Handle take photo button
             takePhotoBtn.addEventListener('click', async function() {
                 try {
-                    stream = await navigator.mediaDevices.getUserMedia({ 
+                    // Request landscape if possible
+                    const constraints = { 
                         video: { 
                             facingMode: 'environment', // Use back camera by default
                             width: { ideal: 1920 },
                             height: { ideal: 1080 }
                         },
                         audio: false 
-                    });
+                    };
+                    
+                    stream = await navigator.mediaDevices.getUserMedia(constraints);
                     cameraPreview.srcObject = stream;
                     cameraContainer.classList.remove('d-none');
                     takePhotoBtn.disabled = true;
                     chooseFileBtn.disabled = true;
+                    
+                    // Check orientation after camera is initialized
+                    checkOrientation();
                 } catch (err) {
                     console.error('Error accessing camera:', err);
                     alert('Tidak dapat mengakses kamera. Pastikan Anda mengizinkan akses kamera.');
@@ -1097,9 +1129,36 @@ $satkerList = fetchRows("SELECT id, nama_satker FROM satker WHERE is_active = 1 
                 canvas.height = cameraPreview.videoHeight;
                 context.drawImage(cameraPreview, 0, 0, canvas.width, canvas.height);
                 
-                // Convert canvas to blob and create a file
-                canvas.toBlob(function(blob) {
-                    const file = new File([blob], 'ktp_capture.jpg', { type: 'image/jpeg' });
+                // Check if the image is portrait and needs rotation
+                // Force landscape orientation if portrait
+                const processCtx = document.getElementById('processCanvas').getContext('2d');
+                let finalWidth = canvas.width;
+                let finalHeight = canvas.height;
+                
+                // If height > width (portrait orientation), rotate to landscape
+                if (canvas.height > canvas.width) {
+                    // Swap dimensions for rotation
+                    finalWidth = canvas.height;
+                    finalHeight = canvas.width;
+                    
+                    // Set canvas to new dimensions
+                    processCtx.canvas.width = finalWidth;
+                    processCtx.canvas.height = finalHeight;
+                    
+                    // Translate and rotate to get landscape
+                    processCtx.translate(finalWidth, 0);
+                    processCtx.rotate(Math.PI / 2); // 90 degrees rotation
+                    processCtx.drawImage(canvas, 0, 0);
+                } else {
+                    // Already in landscape, just copy
+                    processCtx.canvas.width = finalWidth;
+                    processCtx.canvas.height = finalHeight;
+                    processCtx.drawImage(canvas, 0, 0);
+                }
+                
+                // Use the processed canvas for the blob
+                document.getElementById('processCanvas').toBlob(function(blob) {
+                    const file = new File([blob], 'ktp_capture_landscape.jpg', { type: 'image/jpeg' });
                     
                     // Create a DataTransfer object and add the file
                     const dataTransfer = new DataTransfer();
@@ -1139,8 +1198,44 @@ $satkerList = fetchRows("SELECT id, nama_satker FROM satker WHERE is_active = 1 
                     const reader = new FileReader();
                     
                     reader.onload = function(event) {
-                        ktpImage.src = event.target.result;
-                        ktpPreview.classList.remove('d-none');
+                        // Check if we need to rotate the uploaded image
+                        const img = new Image();
+                        img.onload = function() {
+                            // If image is in portrait orientation, rotate it
+                            if (img.height > img.width) {
+                                const processCtx = document.getElementById('processCanvas').getContext('2d');
+                                
+                                // Set canvas dimensions for landscape orientation
+                                processCtx.canvas.width = img.height;
+                                processCtx.canvas.height = img.width;
+                                
+                                // Translate and rotate to get landscape
+                                processCtx.translate(img.height, 0);
+                                processCtx.rotate(Math.PI / 2); // 90 degrees rotation
+                                processCtx.drawImage(img, 0, 0);
+                                
+                                // Convert to blob and replace file
+                                document.getElementById('processCanvas').toBlob(function(blob) {
+                                    const rotatedFile = new File([blob], file.name, { type: 'image/jpeg' });
+                                    
+                                    // Create a DataTransfer object and add the file
+                                    const dataTransfer = new DataTransfer();
+                                    dataTransfer.items.add(rotatedFile);
+                                    
+                                    // Replace the file input
+                                    fileInput.files = dataTransfer.files;
+                                    
+                                    // Show rotated preview
+                                    ktpImage.src = URL.createObjectURL(rotatedFile);
+                                    ktpPreview.classList.remove('d-none');
+                                }, 'image/jpeg', 0.9);
+                            } else {
+                                // Already landscape, just show preview
+                                ktpImage.src = event.target.result;
+                                ktpPreview.classList.remove('d-none');
+                            }
+                        };
+                        img.src = event.target.result;
                     };
                     
                     reader.readAsDataURL(file);
