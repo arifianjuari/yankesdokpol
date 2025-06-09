@@ -2,15 +2,12 @@ name: Deploy to VPS
 
 on:
   push:
-    branches: [ main ]  # Sesuaikan dengan branch yang ingin di-deploy
+    branches: [ main ]
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
-<<<<<<< HEAD
-=======
-    timeout-minutes: 15  # Timeout setelah 15 menit
->>>>>>> fitur-baru
+    timeout-minutes: 15
 
     steps:
     - name: Checkout code
@@ -24,39 +21,6 @@ jobs:
     - name: Add known hosts
       run: |
         mkdir -p ~/.ssh
-<<<<<<< HEAD
-        ssh-keyscan -H ${{ secrets.REMOTE_HOST }} >> ~/.ssh/known_hosts
-
-    - name: Deploy to VPS
-      run: |
-        # Buat direktori jika belum ada
-        ssh -o StrictHostKeyChecking=no ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }} \
-          "mkdir -p ${{ secrets.REMOTE_DIR }} ${{ secrets.REMOTE_DIR }}/uploads ${{ secrets.REMOTE_DIR }}/dokumentasi"
-        
-        # Sinkronisasi file menggunakan rsync
-        rsync -avz --delete \
-          --exclude '.git' \
-          --exclude '.github' \
-          --exclude '.gitignore' \
-          --exclude '.env' \
-          --exclude 'node_modules' \
-          --exclude 'vendor' \
-          --exclude 'sshkey*' \
-          --exclude 'assets/uploads' \
-          --exclude 'uploads' \
-          --exclude 'dokumentasi' \
-          -e "ssh -o StrictHostKeyChecking=no" \
-          ./ \
-          ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }}:${{ secrets.REMOTE_DIR }}/
-
-        # Set permission
-        ssh -o StrictHostKeyChecking=no ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }} "
-          chown -R www-data:www-data ${{ secrets.REMOTE_DIR }}
-          find ${{ secrets.REMOTE_DIR }} -type d -exec chmod 755 {} \;
-          find ${{ secrets.REMOTE_DIR }} -type f -exec chmod 644 {} \;
-          chmod -R 777 ${{ secrets.REMOTE_DIR }}/uploads ${{ secrets.REMOTE_DIR }}/dokumentasi 2>/dev/null
-        "
-=======
         chmod 700 ~/.ssh
         ssh-keyscan -H ${{ secrets.REMOTE_HOST }} >> ~/.ssh/known_hosts
         chmod 600 ~/.ssh/known_hosts
