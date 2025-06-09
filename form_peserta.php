@@ -1103,10 +1103,8 @@ $satkerList = fetchRows("SELECT id, nama_satker FROM satker WHERE is_active = 1 
                     }
                 }
             }
-
             // Listen for orientation changes
             window.addEventListener('resize', checkOrientation);
-
             // Handle take photo button
             takePhotoBtn.addEventListener('click', async function() {
                 try {

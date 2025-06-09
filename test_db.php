@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Database Connection Test Script
  * 
@@ -16,7 +17,7 @@ ob_start();
 echo "<h1>Database Connection Test</h1>";
 
 // Database credentials from your config
-$host = 'auth-db1151.hstgr.io';
+$host = 'srv859992.hstgr.cloud';
 $username = 'u609399718_yankesdokpol';
 $password = 'Juari@2591';
 $database = 'u609399718_yankesdokpol';
@@ -61,13 +62,13 @@ try {
     if ($conn->connect_error) {
         throw new Exception("Connection failed: " . $conn->connect_error);
     }
-    
+
     // Get list of tables
     $result = $conn->query("SHOW TABLES");
     if (!$result) {
         throw new Exception("Failed to query tables: " . $conn->error);
     }
-    
+
     echo "<p style='color:green'>✓ Successfully queried tables</p>";
     echo "<p>Tables in database:</p>";
     echo "<ul>";
@@ -75,7 +76,7 @@ try {
         echo "<li>" . $row[0] . "</li>";
     }
     echo "</ul>";
-    
+
     $conn->close();
 } catch (Exception $e) {
     echo "<p style='color:red'>✗ Failed to access tables: " . $e->getMessage() . "</p>";
@@ -89,7 +90,7 @@ try {
     if ($conn->connect_error) {
         throw new Exception("Connection failed: " . $conn->connect_error);
     }
-    
+
     $variables = [
         'max_connections',
         'max_user_connections',
@@ -97,20 +98,20 @@ try {
         'connect_timeout',
         'wait_timeout'
     ];
-    
+
     echo "<p>MySQL Connection Limits:</p>";
     echo "<table border='1' cellpadding='5'>";
     echo "<tr><th>Variable</th><th>Value</th></tr>";
-    
+
     foreach ($variables as $var) {
         $result = $conn->query("SHOW VARIABLES LIKE '$var'");
         if ($result && $row = $result->fetch_assoc()) {
             echo "<tr><td>{$row['Variable_name']}</td><td>{$row['Value']}</td></tr>";
         }
     }
-    
+
     echo "</table>";
-    
+
     // Try to get user-specific resource limits
     echo "<p>User Resource Limits:</p>";
     $result = $conn->query("SHOW GRANTS FOR CURRENT_USER()");
@@ -121,7 +122,7 @@ try {
         }
         echo "</pre>";
     }
-    
+
     $conn->close();
 } catch (Exception $e) {
     echo "<p style='color:red'>✗ Failed to check connection limits: " . $e->getMessage() . "</p>";
@@ -141,4 +142,3 @@ echo $output;
 
 // Also log the output to a file for reference
 file_put_contents(__DIR__ . '/db_test_results.txt', strip_tags($output));
-?>
