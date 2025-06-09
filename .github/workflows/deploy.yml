@@ -50,8 +50,11 @@ jobs:
         # Change to target directory
         cd ${{ env.REMOTE_DIR }}
         
+        # Create required directories if they don't exist
+        !mkdir -p uploads dokumentasi
+        
         # Mirror project directory to remote (only changed files)
-        mirror -v -R --only-newer --parallel=5 \
+        mirror -v -R --only-newer --ignore-time --parallel=5 \
           --exclude .git/ \
           --exclude .github/ \
           --exclude .gitignore \
@@ -64,10 +67,14 @@ jobs:
           --exclude dokumentasi/ \
           .
         
-        # Set permissions
-        !find . -type d -exec chmod 755 {} \;
-        !find . -type f -exec chmod 644 {} \;
-        !chmod -R 777 uploads dokumentasi
+        # Set directory permissions
+        !find . -type d -not -path "./uploads*" -not -path "./dokumentasi*" -exec chmod 755 {} \;
+        
+        # Set file permissions
+        !find . -type f -not -path "./uploads*" -not -path "./dokumentasi*" -exec chmod 644 {} \;
+        
+        # Special permissions for upload directories
+        !chmod -R 777 uploads/ dokumentasi/ 2>/dev/null || true
         
         # List files after upload
         ls -la
