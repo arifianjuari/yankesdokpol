@@ -7,6 +7,10 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+<<<<<<< HEAD
+=======
+    timeout-minutes: 15  # Timeout setelah 15 menit
+>>>>>>> fitur-baru
 
     steps:
     - name: Checkout code
@@ -20,6 +24,7 @@ jobs:
     - name: Add known hosts
       run: |
         mkdir -p ~/.ssh
+<<<<<<< HEAD
         ssh-keyscan -H ${{ secrets.REMOTE_HOST }} >> ~/.ssh/known_hosts
 
     - name: Deploy to VPS
@@ -50,4 +55,48 @@ jobs:
           find ${{ secrets.REMOTE_DIR }} -type d -exec chmod 755 {} \;
           find ${{ secrets.REMOTE_DIR }} -type f -exec chmod 644 {} \;
           chmod -R 777 ${{ secrets.REMOTE_DIR }}/uploads ${{ secrets.REMOTE_DIR }}/dokumentasi 2>/dev/null
+        "
+=======
+        chmod 700 ~/.ssh
+        ssh-keyscan -H ${{ secrets.REMOTE_HOST }} >> ~/.ssh/known_hosts
+        chmod 600 ~/.ssh/known_hosts
+
+    - name: Install rsync
+      run: sudo apt-get update && sudo apt-get install -y rsync
+
+    - name: Deploy to VPS
+      env:
+        REMOTE_DIR: ${{ secrets.REMOTE_DIR || '/var/www/html/yankesdokpol' }}
+        REMOTE_USER: ${{ secrets.REMOTE_USER || 'root' }}
+        REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
+      run: |
+        # Create necessary directories
+        ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null \
+          ${REMOTE_USER}@${REMOTE_HOST} \
+          "mkdir -p ${REMOTE_DIR} ${REMOTE_DIR}/uploads ${REMOTE_DIR}/dokumentasi"
+        
+        # Deploy using rsync
+        rsync -avz --delete \
+          --exclude='.git' \
+          --exclude='.github' \
+          --exclude='.gitignore' \
+          --exclude='.env' \
+          --exclude='node_modules' \
+          --exclude='vendor' \
+          --exclude='sshkey*' \
+          --exclude='assets/uploads' \
+          --exclude='uploads' \
+          --exclude='dokumentasi' \
+          -e "ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null" \
+          ./ \
+          ${REMOTE_USER}@${REMOTE_HOST}:${REMOTE_DIR}/
+
+        # Set permissions
+        ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null \
+          ${REMOTE_USER}@${REMOTE_HOST} "
+          chown -R www-data:www-data ${REMOTE_DIR}
+          find ${REMOTE_DIR} -type d -not -path \"${REMOTE_DIR}/uploads*\" -not -path \"${REMOTE_DIR}/dokumentasi*\" -exec chmod 755 {} \;
+          find ${REMOTE_DIR} -type f -not -path \"${REMOTE_DIR}/uploads*\" -not -path \"${REMOTE_DIR}/dokumentasi*\" -exec chmod 644 {} \;
+          chmod -R 777 ${REMOTE_DIR}/uploads ${REMOTE_DIR}/dokumentasi 2>/dev/null
+          echo 'Deployment completed successfully!'
         "
