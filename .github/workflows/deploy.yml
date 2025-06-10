@@ -20,7 +20,7 @@ jobs:
       - name: Create deployment directory with rsync exclude
         run: |
           mkdir -p ./deploy_folder
-          rsync -av --exclude='.git/' --exclude='node_modules/' --exclude='vendor/' --exclude='upload/' --exclude='uploads/' --exclude='.github/' --exclude='.DS_Store' --exclude='Thumbs.db' --exclude='.env' --exclude='.env.example' --exclude='.env.local' --exclude='README.md' --exclude='LICENSE' --exclude='composer.lock' --exclude='package-lock.json' --exclude='yarn.lock' --exclude='.vscode/' --exclude='.idea/' --exclude='logs/' --exclude='temp/' --exclude='tmp/' --exclude='cache/' --exclude='*.log' --exclude='*.bak' --exclude='*.swp' --exclude='*.sql' --exclude='*.zip' --exclude='*.tar' --exclude='*.gz' --exclude='*.rar' --exclude='sshkey' --exclude='*.psd' --exclude='*.ai' --exclude='*.sketch' ./ ./deploy_folder/
+          rsync -av --ignore-times --checksum --exclude='.git/' --exclude='node_modules/' --exclude='vendor/' --exclude='upload/' --exclude='uploads/' --exclude='.github/' --exclude='.DS_Store' --exclude='Thumbs.db' --exclude='.env' --exclude='.env.example' --exclude='.env.local' --exclude='README.md' --exclude='LICENSE' --exclude='composer.lock' --exclude='package-lock.json' --exclude='yarn.lock' --exclude='.vscode/' --exclude='.idea/' --exclude='logs/' --exclude='temp/' --exclude='tmp/' --exclude='cache/' --exclude='*.log' --exclude='*.bak' --exclude='*.swp' --exclude='*.sql' --exclude='*.zip' --exclude='*.tar' --exclude='*.gz' --exclude='*.rar' --exclude='sshkey' --exclude='*.psd' --exclude='*.ai' --exclude='*.sketch' ./ ./deploy_folder/
 
       # Debug: tampilkan isi folder deploy_folder
       - name: List files to be deployed
@@ -37,7 +37,7 @@ jobs:
           password: ${{ secrets.FTP_PASSWORD }}
           localDir: "./deploy_folder"
           remoteDir: "/public_html/yankesdokpol"
-          options: "--delete --ascii"
+          options: "--delete --ascii --force"
 
 # Jika terjadi error 530 Login incorrect:
 # - Pastikan credential (FTP_HOST, FTP_USERNAME, FTP_PASSWORD) di GitHub Secrets sudah benar dan bisa login via FileZilla
