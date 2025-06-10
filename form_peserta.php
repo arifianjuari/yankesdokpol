@@ -18,7 +18,6 @@ require_once 'includes/functions.php';
 require_once 'includes/validation.php';
 require_once 'includes/ocr.php';
 // tes perubahan
-// tes 2
 // Page title
 $pageTitle = 'HUT Bhayangkara ke-79 - Pendaftaran Peserta';
 

@@ -16,19 +16,63 @@ jobs:
         with:
           fetch-depth: 2
 
-      # Membuat folder deployment dan menyalin file yang diperlukan saja
-      - name: Create deployment directory with rsync exclude
+      # Verifikasi file yang diubah dalam commit
+      - name: Check changed files
+        run: |
+          echo "Files changed in this commit:"
+          git diff --name-status HEAD~1 HEAD || echo "First commit or shallow clone"
+
+      # Membuat folder deployment dengan exclude yang lebih tepat
+      - name: Create deployment directory
         run: |
           mkdir -p ./deploy_folder
-          rsync -av --ignore-times --checksum --exclude='.git/' --exclude='node_modules/' --exclude='vendor/' --exclude='upload/' --exclude='uploads/' --exclude='.github/' --exclude='.DS_Store' --exclude='Thumbs.db' --exclude='.env' --exclude='.env.example' --exclude='.env.local' --exclude='README.md' --exclude='LICENSE' --exclude='composer.lock' --exclude='package-lock.json' --exclude='yarn.lock' --exclude='.vscode/' --exclude='.idea/' --exclude='logs/' --exclude='temp/' --exclude='tmp/' --exclude='cache/' --exclude='*.log' --exclude='*.bak' --exclude='*.swp' --exclude='*.sql' --exclude='*.zip' --exclude='*.tar' --exclude='*.gz' --exclude='*.rar' --exclude='sshkey' --exclude='*.psd' --exclude='*.ai' --exclude='*.sketch' ./ ./deploy_folder/
+          rsync -av \
+            --exclude='.git/' \
+            --exclude='node_modules/' \
+            --exclude='vendor/' \
+            --exclude='.github/' \
+            --exclude='.DS_Store' \
+            --exclude='Thumbs.db' \
+            --exclude='.env' \
+            --exclude='.env.*' \
+            --exclude='README.md' \
+            --exclude='LICENSE' \
+            --exclude='composer.lock' \
+            --exclude='package-lock.json' \
+            --exclude='yarn.lock' \
+            --exclude='.vscode/' \
+            --exclude='.idea/' \
+            --exclude='logs/' \
+            --exclude='temp/' \
+            --exclude='tmp/' \
+            --exclude='cache/' \
+            --exclude='*.log' \
+            --exclude='*.bak' \
+            --exclude='*.swp' \
+            --exclude='*.sql' \
+            --exclude='*.zip' \
+            --exclude='*.tar' \
+            --exclude='*.gz' \
+            --exclude='*.rar' \
+            --exclude='sshkey' \
+            --exclude='*.psd' \
+            --exclude='*.ai' \
+            --exclude='*.sketch' \
+            ./ ./deploy_folder/
 
-      # Debug: tampilkan isi folder deploy_folder
-      - name: List files to be deployed
+      # Verifikasi file penting ada di folder deploy
+      - name: Verify important files
         run: |
-          echo "Daftar file yang akan diupload:"
-          find ./deploy_folder
+          echo "Verifikasi file PHP penting:"
+          find ./deploy_folder -name "*.php" | grep -i "form_peserta\.php" || echo "PERINGATAN: form_peserta.php tidak ada di folder deploy!"
+          
+          echo "\nDaftar file yang akan diupload (sampel 20 file):"
+          find ./deploy_folder -type f | sort | head -20
+          
+          echo "\nJumlah file yang akan diupload:"
+          find ./deploy_folder -type f | wc -l
 
-      # Upload ke FTP
+      # Upload ke FTP dengan opsi yang lebih aman
       - name: Deploy to Hostinger FTP
         uses: sebastianpopp/ftp-action@releases/v2
         with:
@@ -37,10 +81,10 @@ jobs:
           password: ${{ secrets.FTP_PASSWORD }}
           localDir: "./deploy_folder"
           remoteDir: "/public_html/yankesdokpol"
-          options: "--delete --ascii --force"
+          options: "--delete --ascii --verbose"
 
-# Jika terjadi error 530 Login incorrect:
-# - Pastikan credential (FTP_HOST, FTP_USERNAME, FTP_PASSWORD) di GitHub Secrets sudah benar dan bisa login via FileZilla
-# - Username/password FTP biasanya berbeda dengan login cPanel
-# - Cek juga apakah user FTP punya akses ke folder tujuan
-# - Jika tetap error, coba reset password FTP di panel hosting
+# CATATAN PENTING:
+# 1. Pastikan credential FTP di GitHub Secrets sudah benar
+# 2. Jika file tidak terupload, cek log "Verify important files" untuk memastikan file ada di folder deploy
+# 3. Folder upload/uploads TIDAK diexclude lagi - semua file akan diupload
+# 4. Gunakan workflow_dispatch untuk deploy manual jika perlu
