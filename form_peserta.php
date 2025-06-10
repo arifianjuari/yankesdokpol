@@ -821,6 +821,9 @@ $satkerList = fetchRows("SELECT id, nama_satker FROM satker WHERE is_active = 1 
                                         $isSelected = true;
                                     } elseif (!$editMode && $lastAcaraId && $event['id'] == $lastAcaraId) {
                                         $isSelected = true;
+                                    } elseif (!$editMode && !$lastAcaraId && $event === reset($eventList)) {
+                                        // Jika bukan edit mode, tidak ada cookie, dan ini adalah acara terbaru (baris pertama)
+                                        $isSelected = true;
                                     }
                                 ?>
                                     <option value="<?php echo $event['id']; ?>" <?php echo $isSelected ? 'selected' : ''; ?>>
@@ -850,7 +853,14 @@ $satkerList = fetchRows("SELECT id, nama_satker FROM satker WHERE is_active = 1 
                                     <select class="form-select" id="satkerId" name="satker_id">
                                         <option value="">-- Pilih Satker --</option>
                                         <?php foreach ($satkerList as $satker): ?>
-                                            <option value="<?php echo $satker['id']; ?>" <?php echo ($editMode && isset($existingData['satker_id']) && $existingData['satker_id'] == $satker['id']) ? 'selected' : ''; ?>>
+                                            <option value="<?php echo $satker['id']; ?>" <?php
+    if ($editMode && isset($existingData['satker_id']) && $existingData['satker_id'] == $satker['id']) {
+        echo 'selected';
+    } elseif (!$editMode && $satker['id'] == 78) {
+        // Jika bukan edit mode, set default ke 78 (RSB Batu)
+        echo 'selected';
+    }
+?>>
                                                 <?php echo htmlspecialchars($satker['nama_satker']); ?>
                                             </option>
                                         <?php endforeach; ?>
@@ -1343,6 +1353,8 @@ $satkerList = fetchRows("SELECT id, nama_satker FROM satker WHERE is_active = 1 
                 const lastSatkerId = localStorage.getItem('yankesdokpol_last_satker_id');
                 if (lastSatkerId) {
                     satkerSelect.value = lastSatkerId;
+                } else {
+                    satkerSelect.value = '78'; // Fallback ke RSB Batu jika kosong
                 }
             }
         });
