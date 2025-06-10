@@ -17,7 +17,7 @@ require_once 'config/database.php';
 require_once 'includes/functions.php';
 require_once 'includes/validation.php';
 require_once 'includes/ocr.php';
-
+// tes perubahan
 // Page title
 $pageTitle = 'HUT Bhayangkara ke-79 - Pendaftaran Peserta';
 
@@ -854,13 +854,13 @@ $satkerList = fetchRows("SELECT id, nama_satker FROM satker WHERE is_active = 1 
                                         <option value="">-- Pilih Satker --</option>
                                         <?php foreach ($satkerList as $satker): ?>
                                             <option value="<?php echo $satker['id']; ?>" <?php
-    if ($editMode && isset($existingData['satker_id']) && $existingData['satker_id'] == $satker['id']) {
-        echo 'selected';
-    } elseif (!$editMode && $satker['id'] == 78) {
-        // Jika bukan edit mode, set default ke 78 (RSB Batu)
-        echo 'selected';
-    }
-?>>
+                                                                                            if ($editMode && isset($existingData['satker_id']) && $existingData['satker_id'] == $satker['id']) {
+                                                                                                echo 'selected';
+                                                                                            } elseif (!$editMode && $satker['id'] == 78) {
+                                                                                                // Jika bukan edit mode, set default ke 78 (RSB Batu)
+                                                                                                echo 'selected';
+                                                                                            }
+                                                                                            ?>>
                                                 <?php echo htmlspecialchars($satker['nama_satker']); ?>
                                             </option>
                                         <?php endforeach; ?>
